@@ -110,7 +110,7 @@
     if(refStats){
       const blocks = refStats.querySelectorAll('div');
       const strong = blocks[1]?.querySelector('strong');
-      if(strong) strong.textContent = '3 000 ₽';
+      if(strong) strong.textContent = '5 000 ₽';
     }
   }
 
