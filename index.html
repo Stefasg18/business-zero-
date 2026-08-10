@@ -4,15 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1020" />
-  <title>Бизнес с нуля 3.0</title>
+  <title>Бизнес с нуля 3.1</title>
   <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
-  <link rel="stylesheet" href="styles.css?v=7" />
+  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="minigame.css?v=1" />
 </head>
 <body>
   <div class="app">
     <header class="topbar">
       <div>
-        <div class="eyebrow">BUSINESS GAME · 3.0</div>
+        <div class="eyebrow">BUSINESS GAME · 3.1</div>
         <h1>Бизнес с нуля</h1>
       </div>
       <div class="top-actions">
@@ -62,6 +63,30 @@
                 <span class="stat-caption">До нового уровня</span>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section class="section mini-game-section">
+          <div class="section-head">
+            <div><div class="eyebrow">ИГРА НА 20 СЕКУНД</div><h2>Бизнес-блиц</h2></div>
+            <span class="mini-live">⚡ Быстрый заработок</span>
+          </div>
+          <div class="mini-game-card">
+            <div class="mini-game-glow"></div>
+            <div class="mini-game-copy">
+              <div class="mini-game-icon">🧠</div>
+              <div>
+                <h3>Выбери более выгодную сделку</h3>
+                <p>5 быстрых раундов. Считай прибыль и зарабатывай на реальных игровых сделках.</p>
+              </div>
+            </div>
+            <div class="mini-game-stats">
+              <div><span>Энергия</span><strong id="miniAttempts">—</strong></div>
+              <div><span>Раундов</span><strong id="miniBest">—</strong></div>
+              <div><span>Заработок</span><strong id="miniEarned">—</strong></div>
+            </div>
+            <button id="miniGameStartBtn" class="mini-game-start">Играть сейчас</button>
+            <div id="miniGameVipHint" class="mini-game-hint"></div>
           </div>
         </section>
 
@@ -212,6 +237,42 @@
 
   <div id="toast" class="toast"></div>
 
+  <div id="miniGameModal" class="mini-modal hidden">
+    <div class="mini-modal-backdrop" data-close-mini></div>
+    <div class="mini-modal-card">
+      <div class="mini-modal-top">
+        <div>
+          <div class="eyebrow">БИЗНЕС-БЛИЦ</div>
+          <h3 id="miniRoundTitle">Раунд 1 / 5</h3>
+        </div>
+        <button class="mini-close" data-close-mini>×</button>
+      </div>
+
+      <div class="mini-timer"><span id="miniTimerBar"></span></div>
+      <div id="miniScoreLine" class="mini-score-line">Счёт: 0 / 5</div>
+
+      <div id="miniQuestion" class="mini-question">
+        <div class="mini-question-label">Где чистая прибыль выше?</div>
+        <div class="mini-options">
+          <button class="mini-option" data-mini-choice="left">
+            <span class="mini-option-letter">A</span>
+            <strong id="miniLeftRevenue">—</strong>
+            <small>Выручка</small>
+            <div><span>Расходы</span><b id="miniLeftCost">—</b></div>
+          </button>
+          <button class="mini-option" data-mini-choice="right">
+            <span class="mini-option-letter">B</span>
+            <strong id="miniRightRevenue">—</strong>
+            <small>Выручка</small>
+            <div><span>Расходы</span><b id="miniRightCost">—</b></div>
+          </button>
+        </div>
+      </div>
+
+      <div id="miniResult" class="mini-result hidden"></div>
+    </div>
+  </div>
+
   <div id="modal" class="modal hidden">
     <div class="modal-backdrop" data-close-modal></div>
     <div class="modal-card">
@@ -223,7 +284,8 @@
     </div>
   </div>
 
-  <script src="config.js?v=7"></script>
-  <script src="app.js?v=7"></script>
+  <script src="config.js?v=8"></script>
+  <script src="app.js?v=8"></script>
+  <script src="minigame.js?v=1"></script>
 </body>
 </html>
