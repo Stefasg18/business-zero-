@@ -31,6 +31,12 @@ window.addEventListener("load", () => {
               const mobileFix = document.createElement("script");
               mobileFix.src = `mobile-fix-v371.js?v=371-${Date.now()}`;
               mobileFix.async = false;
+              mobileFix.onload = () => {
+                const noLevel = document.createElement("script");
+                noLevel.src = `no-level-v38.js?v=38-${Date.now()}`;
+                noLevel.async = false;
+                document.body.appendChild(noLevel);
+              };
               document.body.appendChild(mobileFix);
             };
             document.body.appendChild(patch);
