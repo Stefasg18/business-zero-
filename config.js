@@ -15,6 +15,12 @@ window.addEventListener("load", () => {
       const admin = document.createElement("script");
       admin.src = `admin-v34.js?v=34-${Date.now()}`;
       admin.async = false;
+      admin.onload = () => {
+        const storeFix = document.createElement("script");
+        storeFix.src = `store-v35.js?v=35-${Date.now()}`;
+        storeFix.async = false;
+        document.body.appendChild(storeFix);
+      };
       document.body.appendChild(admin);
     };
     document.body.appendChild(security);
