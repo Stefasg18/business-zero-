@@ -27,6 +27,12 @@ window.addEventListener("load", () => {
             const patch = document.createElement("script");
             patch.src = `ux-v37-patch.js?v=37-${Date.now()}`;
             patch.async = false;
+            patch.onload = () => {
+              const mobileFix = document.createElement("script");
+              mobileFix.src = `mobile-fix-v371.js?v=371-${Date.now()}`;
+              mobileFix.async = false;
+              document.body.appendChild(mobileFix);
+            };
             document.body.appendChild(patch);
           };
           document.body.appendChild(ux);
