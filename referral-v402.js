@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='4.0.2';
+  const VERSION='4.1';
   const REF_REWARD=5000;
 
   function applyReferralUi(){
@@ -33,4 +33,13 @@
   }catch{}
 
   applyReferralUi();
+
+  if(!document.getElementById('arcadeHubV41Loader')){
+    const s=document.createElement('script');
+    s.id='arcadeHubV41Loader';
+    s.src=`arcade-hub-v41.js?v=41-${Date.now()}`;
+    s.async=false;
+    s.onerror=()=>console.error('Не удалось загрузить игровой центр 4.1');
+    document.body.appendChild(s);
+  }
 })();
