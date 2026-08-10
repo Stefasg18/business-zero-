@@ -11,6 +11,12 @@ window.addEventListener("load", () => {
     const security = document.createElement("script");
     security.src = `security-v33.js?v=33-${Date.now()}`;
     security.async = false;
+    security.onload = () => {
+      const admin = document.createElement("script");
+      admin.src = `admin-v34.js?v=34-${Date.now()}`;
+      admin.async = false;
+      document.body.appendChild(admin);
+    };
     document.body.appendChild(security);
   };
   document.body.appendChild(progression);
