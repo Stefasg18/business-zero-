@@ -10,11 +10,11 @@
     const linkEl=document.getElementById("refLink");
     if(linkEl)linkEl.textContent=link||"Открой приложение внутри Telegram";
     const rewardEl=document.querySelector(".ref-stats div:nth-child(2) strong");
-    if(rewardEl)rewardEl.textContent="3 000 ₽";
+    if(rewardEl)rewardEl.textContent="5 000 ₽";
     const labelEl=document.querySelector(".ref-stats div:nth-child(1) span");
     if(labelEl)labelEl.textContent="Активных друзей";
     const text=document.querySelector(".ref-card > p");
-    if(text)text.textContent="За активного приглашённого друга ты получаешь 3 000 игровых ₽. Награда начисляется, когда друг достигнет 5 уровня и сделает 10 сделок. Приглашённый получает +1 000 ₽ на старте.";
+    if(text)text.textContent="За активного приглашённого друга ты получаешь 5 000 игровых ₽. Награда начисляется, когда друг достигнет 5 уровня и сделает 10 сделок. Приглашённый получает +1 000 ₽ на старте.";
   };
 
   renderAchievements = function(){
