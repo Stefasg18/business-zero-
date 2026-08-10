@@ -6,7 +6,7 @@ window.BZ_CONFIG = {
 window.addEventListener("load", () => {
   const load = (src, done) => {
     const script = document.createElement("script");
-    script.src = `${src}?v=372-${Date.now()}`;
+    script.src = `${src}?v=39-${Date.now()}`;
     script.async = false;
     script.onload = () => done?.();
     script.onerror = () => console.error(`Не удалось загрузить ${src}`);
@@ -20,7 +20,11 @@ window.addEventListener("load", () => {
           load("ux-v37.js", () => {
             load("ux-v37-patch.js", () => {
               load("mobile-fix-v371.js", () => {
-                load("stability-v372.js");
+                load("stability-v372.js", () => {
+                  load("arcade-v39.js", () => {
+                    load("ui-v39.js");
+                  });
+                });
               });
             });
           });
