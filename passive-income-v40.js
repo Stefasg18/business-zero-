@@ -112,8 +112,6 @@
     }, 250);
   }
 
-  // Любое серверное действие обновляет базу для плавного счётчика,
-  // чтобы визуальная сумма не могла временно «откатываться» после покупки или сделки.
   const originalApplyServerState = applyServerState;
   applyServerState = function(s){
     originalApplyServerState(s);
@@ -156,4 +154,12 @@
   setInterval(() => {
     if(firstEntrySyncDone) syncPassive({showReturn:false});
   }, 15000);
+
+  // Load the daily-quest consistency fix even for clients that still have config.js?v=400 cached.
+  if(!document.querySelector('script[data-quest-v401]')){
+    const questFix=document.createElement('script');
+    questFix.dataset.questV401='1';
+    questFix.src=`quest-state-v401.js?v=401-${Date.now()}`;
+    document.body.appendChild(questFix);
+  }
 })();
