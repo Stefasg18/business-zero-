@@ -6,7 +6,7 @@ window.BZ_CONFIG = {
 window.addEventListener("load", () => {
   const load = (src, done) => {
     const script = document.createElement("script");
-    script.src = `${src}?v=40-${Date.now()}`;
+    script.src = `${src}?v=401-${Date.now()}`;
     script.async = false;
     script.onload = () => done?.();
     script.onerror = () => console.error(`Не удалось загрузить ${src}`);
@@ -23,7 +23,9 @@ window.addEventListener("load", () => {
                 load("stability-v372.js", () => {
                   load("arcade-v39.js", () => {
                     load("ui-v39.js", () => {
-                      load("passive-income-v40.js");
+                      load("passive-income-v40.js", () => {
+                        load("quest-state-v401.js");
+                      });
                     });
                   });
                 });
