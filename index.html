@@ -243,9 +243,28 @@
       <div class="mini-modal-top">
         <div>
           <div class="eyebrow">ДЕНЕЖНЫЙ ПОТОК</div>
-          <h3 id="miniRoundTitle">Аркада</h3>
+          <h3 id="miniRoundTitle">Раунд 1 / 5</h3>
         </div>
         <button class="mini-close" data-close-mini>×</button>
+      </div>
+      <div class="mini-timer"><span id="miniTimerBar"></span></div>
+      <div id="miniScoreLine" class="mini-score-line">Счёт: 0 / 5</div>
+      <div id="miniQuestion" class="mini-question">
+        <div class="mini-question-label">Где чистая прибыль выше?</div>
+        <div class="mini-options">
+          <button class="mini-option" data-mini-choice="left">
+            <span class="mini-option-letter">A</span>
+            <strong id="miniLeftRevenue">—</strong>
+            <small>Выручка</small>
+            <div><span>Расходы</span><b id="miniLeftCost">—</b></div>
+          </button>
+          <button class="mini-option" data-mini-choice="right">
+            <span class="mini-option-letter">B</span>
+            <strong id="miniRightRevenue">—</strong>
+            <small>Выручка</small>
+            <div><span>Расходы</span><b id="miniRightCost">—</b></div>
+          </button>
+        </div>
       </div>
       <div id="miniResult" class="mini-result hidden"></div>
     </div>
