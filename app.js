@@ -30,7 +30,7 @@ const LOCAL_QUEST_DEFS = [
 const DEFAULT_STATE = {
   cash:5000,energy:10,maxEnergy:10,xp:0,level:1,businesses:{},
   lastCollectAt:Date.now(),lastEnergyAt:Date.now(),lastBonusDate:null,referralCount:0,
-  questDate:null,quests:[]
+  questDate:null,quests:[],achievements:[],levelRewards:[],loginStreak:null,monetization:{vipActive:false,vipUntil:null,supporterTier:0},store:{products:[],purchases:[]}
 };
 
 let state = loadLocal();
@@ -185,6 +185,293 @@ async function claimQuest(id){
   q.claimed=true;state.cash+=q.rewardCash;addXp(q.rewardXp);saveLocal();notify("success");showToast(`Награда +${fmt(q.rewardCash)} ₽`);render();
 }
 
+
+function renderLoginStreak(){
+  const el=document.getElementById("loginStreak");if(!el)return;
+  const ls=state.loginStreak;
+  if(!ls){
+    el.innerHTML='<div class="info-card">Серия входов доступна в ONLINE-режиме.</div>';
+    return;
+  }
+  const next=Number(ls.nextDay||1);
+  const completed=Number(ls.completedDays||0);
+  const rewards=Array.isArray(ls.rewards)?ls.rewards:[];
+  el.innerHTML=`<div class="login-head">
+      <div>
+        <strong>🔥 День ${next} из 7</strong>
+        <span>${ls.claimedToday?"Сегодняшняя награда уже получена":"Заходи каждый день без пропусков"}</span>
+      </div>
+    </div>
+    <div class="login-days">
+      ${rewards.map(r=>`<div class="login-day ${r.day===next&&!ls.claimedToday?"current":""} ${r.day<=completed?"done":""}">
+        <strong>${r.day}</strong><span>${fmt(r.rewardCash)} ₽</span>
+      </div>`).join("")}
+    </div>
+    <div class="login-meta">
+      <div><span>Текущая серия</span><strong>${fmt(ls.currentStreak||0)} 🔥</strong></div>
+      <div><span>Лучшая серия</span><strong>${fmt(ls.bestStreak||0)} дней</strong></div>
+    </div>
+    <button id="claimLoginBtn" class="login-claim" ${ls.claimedToday?"disabled":""}>
+      ${ls.claimedToday
+        ?"✓ Сегодня получено"
+        :`Забрать ${fmt(ls.nextReward?.rewardCash||0)} ₽ + ${fmt(ls.nextReward?.rewardXp||0)} XP`}
+    </button>`;
+  document.getElementById("claimLoginBtn")?.addEventListener("click",claimLoginReward);
+}
+
+function renderLevelRewards(){
+  const el=document.getElementById("levelRewards");if(!el)return;
+  const rows=Array.isArray(state.levelRewards)?state.levelRewards:[];
+  if(!rows.length){
+    el.innerHTML='<div class="info-card">Награды появятся после загрузки профиля.</div>';
+    return;
+  }
+  el.innerHTML=rows.map(r=>{
+    const btn=r.claimed
+      ?'<button class="claimed" disabled>✓ Получено</button>'
+      :r.unlocked
+        ?`<button class="ready" data-level-reward="${r.level}">Забрать</button>`
+        :'<button disabled>Закрыто</button>';
+    return `<div class="level-reward">
+      <div class="level-reward-icon">🎁</div>
+      <div class="level-reward-main">
+        <strong>Уровень ${r.level}</strong>
+        <span>Награда ${fmt(r.rewardCash)} ₽</span>
+      </div>
+      ${btn}
+    </div>`;
+  }).join("");
+  el.querySelectorAll("[data-level-reward]").forEach(
+    b=>b.addEventListener("click",()=>claimLevelReward(Number(b.dataset.levelReward)))
+  );
+}
+
+function renderAchievements(){
+  const el=document.getElementById("achievements");if(!el)return;
+  const rows=Array.isArray(state.achievements)?state.achievements:[];
+  if(!rows.length){
+    el.innerHTML='<div class="info-card">Достижения появятся после загрузки профиля.</div>';
+    return;
+  }
+  el.innerHTML=rows.map(a=>{
+    const progress=Math.min(Number(a.progress||0),Number(a.target||1));
+    const pct=Math.max(0,Math.min(100,Math.round(progress/Number(a.target||1)*100)));
+    const moneyMetric=["profit_20000","capital_25000"].includes(a.id);
+    const label=moneyMetric
+      ?`${fmt(progress)} / ${fmt(a.target)} ₽`
+      :`${fmt(progress)} / ${fmt(a.target)}`;
+    const btn=a.claimed
+      ?'<button class="claimed" disabled>✓ Награда получена</button>'
+      :a.unlocked
+        ?`<button class="ready" data-achievement="${a.id}">Забрать награду</button>`
+        :'<button disabled>Ещё не выполнено</button>';
+    return `<article class="achievement-card">
+      <div class="achievement-top">
+        <div class="achievement-icon">${a.icon}</div>
+        <div class="achievement-main">
+          <strong>${escapeHtml(a.title)}</strong>
+          <p>${escapeHtml(a.description)}</p>
+        </div>
+      </div>
+      <div class="achievement-reward">
+        Награда: ${fmt(a.rewardCash)} ₽ + ${fmt(a.rewardXp)} XP
+      </div>
+      <div class="achievement-progress">
+        <span>Прогресс</span><strong>${label}</strong>
+      </div>
+      <div class="achievement-bar"><span style="width:${pct}%"></span></div>
+      ${btn}
+    </article>`;
+  }).join("");
+  el.querySelectorAll("[data-achievement]").forEach(
+    b=>b.addEventListener("click",()=>claimAchievement(b.dataset.achievement))
+  );
+}
+
+async function claimLoginReward(){
+  if(!ONLINE_MODE){
+    showToast("Серия входов работает в ONLINE-режиме");
+    return;
+  }
+  try{
+    const d=await api("/api/bonus",{method:"POST"});
+    applyServerState(d.state);notify("success");showToast(d.message);
+  }catch(e){showToast(e.message)}
+}
+
+async function claimAchievement(id){
+  if(!ONLINE_MODE)return;
+  try{
+    const d=await api("/api/achievement/claim",{
+      method:"POST",
+      body:JSON.stringify({achievementId:id})
+    });
+    applyServerState(d.state);notify("success");showToast(d.message);
+  }catch(e){showToast(e.message)}
+}
+
+async function claimLevelReward(level){
+  if(!ONLINE_MODE)return;
+  try{
+    const d=await api("/api/level-reward/claim",{
+      method:"POST",
+      body:JSON.stringify({level})
+    });
+    applyServerState(d.state);notify("success");showToast(d.message);
+  }catch(e){showToast(e.message)}
+}
+
+function openLoginPanel(){
+  const btn=document.querySelector('.nav-btn[data-tab="profile"]');
+  if(btn)btn.click();
+  setTimeout(
+    ()=>document.getElementById("loginSection")?.scrollIntoView({behavior:"smooth",block:"start"}),
+    120
+  );
+}
+
+
+function storeProductById(id){
+  return (state.store?.products||[]).find(x=>x.id===id)||null;
+}
+
+function renderProfileBadges(){
+  const el=document.getElementById("profileBadges");if(!el)return;
+  const m=state.monetization||{};
+  const badges=[];
+  if(m.vipActive){
+    const date=m.vipUntil?new Date(m.vipUntil).toLocaleDateString("ru-RU"):"";
+    badges.push(`<span class="profile-badge vip">👑 VIP${date?` до ${date}`:""}</span>`);
+  }
+  if(Number(m.supporterTier||0)>0){
+    badges.push(`<span class="profile-badge supporter">❤️ Supporter ×${Number(m.supporterTier)}</span>`);
+  }
+  el.innerHTML=badges.join("");
+}
+
+function renderStore(){
+  const productsEl=document.getElementById("storeProducts");
+  const historyEl=document.getElementById("purchaseHistory");
+  if(!productsEl||!historyEl)return;
+
+  const products=state.store?.products||[];
+  productsEl.innerHTML=products.length
+    ?products.map(p=>`<article class="store-card">
+      <div class="store-icon">${p.icon}</div>
+      <div class="store-main">
+        <div class="store-title-row">
+          <span class="store-title">${escapeHtml(p.title)}</span>
+          ${p.badge?`<span class="store-tag">${escapeHtml(p.badge)}</span>`:""}
+        </div>
+        <div class="store-desc">${escapeHtml(p.description)}</div>
+      </div>
+      <button class="store-buy" data-buy-product="${p.id}">${fmt(p.stars)} ⭐</button>
+    </article>`).join("")
+    :'<div class="store-empty">Открой игру внутри Telegram, чтобы загрузить магазин.</div>';
+
+  productsEl.querySelectorAll("[data-buy-product]").forEach(
+    b=>b.addEventListener("click",()=>buyStoreProduct(b.dataset.buyProduct,b))
+  );
+
+  const purchases=state.store?.purchases||[];
+  historyEl.innerHTML=purchases.length
+    ?purchases.map(o=>{
+      const p=storeProductById(o.product_id);
+      const when=o.paid_at?new Date(o.paid_at).toLocaleString("ru-RU"):"";
+      return `<div class="purchase-row">
+        <div class="icon">${p?.icon||"⭐"}</div>
+        <div class="main">
+          <strong>${escapeHtml(p?.title||o.product_id)}</strong>
+          <span>${escapeHtml(when)}</span>
+        </div>
+        <div class="purchase-stars">${fmt(o.stars)} ⭐</div>
+      </div>`;
+    }).join("")
+    :'<div class="store-empty">Покупок пока нет.</div>';
+}
+
+async function loadStore(){
+  if(!ONLINE_MODE){
+    state.store={products:[],purchases:[]};
+    renderStore();
+    return;
+  }
+  try{
+    const d=await api("/api/store");
+    state.store={products:d.products||[],purchases:d.purchases||[]};
+    state.monetization={
+      vipActive:Boolean(d.vipActive),
+      vipUntil:d.vipUntil||null,
+      supporterTier:Number(d.supporterTier||0)
+    };
+    renderStore();renderProfileBadges();
+  }catch(e){
+    showToast(e.message);
+  }
+}
+
+async function buyStoreProduct(productId,button){
+  if(!ONLINE_MODE){
+    showToast("Покупки доступны только в ONLINE-режиме");
+    return;
+  }
+  if(!tg?.openInvoice){
+    showToast("Открой магазин внутри Telegram");
+    return;
+  }
+
+  const product=storeProductById(productId);
+  if(!product)return;
+
+  button.disabled=true;
+  try{
+    const d=await api("/api/store/invoice",{
+      method:"POST",
+      body:JSON.stringify({productId})
+    });
+
+    tg.openInvoice(d.invoiceUrl,async status=>{
+      if(status==="paid"){
+        showToast("Оплата принята. Начисляем покупку...");
+        await waitForPaidOrder(d.orderId);
+      }else if(status==="pending"){
+        showToast("Платёж обрабатывается");
+      }else if(status==="cancelled"){
+        showToast("Оплата отменена");
+      }else{
+        showToast("Платёж не завершён");
+      }
+      button.disabled=false;
+    });
+  }catch(e){
+    button.disabled=false;
+    showToast(e.message);
+  }
+}
+
+async function waitForPaidOrder(orderId){
+  for(let i=0;i<8;i++){
+    try{
+      const d=await api(`/api/store/order/${encodeURIComponent(orderId)}`);
+      if(d.order?.status==="paid"){
+        if(d.state)applyServerState(d.state);
+        await loadStore();
+        notify("success");
+        showToast("✅ Покупка начислена");
+        return;
+      }
+    }catch{}
+    await new Promise(r=>setTimeout(r,900));
+  }
+  await loadStore();
+  showToast("Платёж принят. Если начисление задержалось — открой магазин ещё раз.");
+}
+
+function openStorePanel(){
+  const btn=document.querySelector('.nav-btn[data-tab="store"]');
+  if(btn)btn.click();
+}
+
 function render(){
   regenEnergy();
   document.getElementById("cash").textContent=fmt(state.cash);
@@ -197,7 +484,7 @@ function render(){
   document.getElementById("profileCash").textContent=fmt(state.cash);
   document.getElementById("profileXp").textContent=fmt(state.xp);
   document.getElementById("profileBusinesses").textContent=Object.keys(state.businesses||{}).length;
-  renderDeals();renderBusinesses();renderReferral();renderQuests();
+  renderDeals();renderBusinesses();renderReferral();renderQuests();renderLoginStreak();renderLevelRewards();renderAchievements();renderProfileBadges();
 }
 
 function applyServerState(s){
@@ -207,6 +494,10 @@ function applyServerState(s){
     xp:Number(s.xp),level:Number(s.level),businesses:s.businesses||{},
     referralCount:Number(s.referralCount||0),
     quests:Array.isArray(s.quests)?s.quests:state.quests,
+    achievements:Array.isArray(s.achievements)?s.achievements:state.achievements,
+    levelRewards:Array.isArray(s.levelRewards)?s.levelRewards:state.levelRewards,
+    loginStreak:s.loginStreak||state.loginStreak,
+    monetization:s.monetization||state.monetization,
     lastBonusDate:s.lastBonusDate||null,
     lastCollectAt:Date.now(),lastEnergyAt:Date.now()
   };
@@ -249,17 +540,7 @@ async function collectIncome(){
   state.cash+=earned;state.lastCollectAt=now;addXp(Math.min(50,Math.floor(earned/1000)+2));saveLocal();showToast(`Пассивный доход: +${fmt(earned)} ₽`);render();
 }
 
-async function openDailyBonus(){
-  if(ONLINE_MODE){
-    try{const d=await api("/api/bonus",{method:"POST"});applyServerState(d.state);showToast(d.message)}
-    catch(e){showToast(e.message)};return;
-  }
-  if(state.lastBonusDate===todayKey()){openModal({icon:"✅",title:"Бонус уже получен",text:"Возвращайся завтра — будет новый бонус."});return}
-  const bonus=1200+state.level*250;
-  openModal({icon:"🎁",title:"Ежедневный бонус",text:`Сегодня тебе доступно ${fmt(bonus)} ₽ и 2 энергии.`,actionText:`Забрать ${fmt(bonus)} ₽`,onAction:()=>{
-    state.cash+=bonus;state.energy=Math.min(state.maxEnergy,state.energy+2);state.lastBonusDate=todayKey();addXp(25);saveLocal();closeModal();showToast(`Бонус +${fmt(bonus)} ₽`);render()
-  }});
-}
+function openDailyBonus(){openLoginPanel()}
 
 async function loadLeaderboard(){
   const el=document.getElementById("leaderboard");
@@ -310,7 +591,7 @@ async function bootOnline(){
     await api("/api/session",{method:"POST",body:JSON.stringify({startParam})});
     const d=await api("/api/state");applyServerState(d.state);
     document.getElementById("modeBadge").textContent="ONLINE";document.getElementById("modeBadge").classList.add("online");
-    document.getElementById("onlineNote").textContent="Онлайн-режим: баланс, бизнесы, рейтинг и ежедневные задания хранятся на сервере.";
+    document.getElementById("onlineNote").textContent="Онлайн-режим: прогресс, магазин Stars, задания, достижения и серия входов хранятся на сервере.";
     document.getElementById("onlineNote").classList.add("online");
     document.getElementById("resetBtn").style.display="none";
   }catch(e){
@@ -324,11 +605,13 @@ document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",
   document.querySelectorAll(".nav-btn").forEach(x=>x.classList.toggle("active",x===btn));
   document.querySelectorAll(".tab-page").forEach(x=>x.classList.toggle("active",x.id===`tab-${tab}`));
   if(tab==="rating")loadLeaderboard();
+  if(tab==="store")loadStore();
   window.scrollTo({top:0,behavior:"smooth"});
 }));
 document.getElementById("collectBtn").addEventListener("click",collectIncome);
-document.getElementById("bonusBtn").addEventListener("click",openDailyBonus);
+document.getElementById("bonusBtn").addEventListener("click",openStorePanel);
 document.getElementById("refreshRatingBtn").addEventListener("click",loadLeaderboard);
+document.getElementById("refreshStoreBtn")?.addEventListener("click",loadStore);
 document.getElementById("copyRefBtn").addEventListener("click",async()=>{
   const link=referralLink();if(!link){showToast("Открой игру внутри Telegram");return}
   try{await navigator.clipboard.writeText(link);showToast("Ссылка скопирована")}

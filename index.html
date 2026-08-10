@@ -4,20 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1020" />
-  <title>Бизнес с нуля 2.1</title>
+  <title>Бизнес с нуля 3.0</title>
   <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <div class="app">
     <header class="topbar">
       <div>
-        <div class="eyebrow">BUSINESS GAME · 2.1</div>
+        <div class="eyebrow">BUSINESS GAME · 3.0</div>
         <h1>Бизнес с нуля</h1>
       </div>
       <div class="top-actions">
         <span id="modeBadge" class="mode-badge">DEMO</span>
-        <button id="bonusBtn" class="icon-btn" title="Ежедневный бонус">🎁</button>
+        <button id="bonusBtn" class="icon-btn" title="Магазин Stars">🎁</button>
       </div>
     </header>
 
@@ -35,10 +35,33 @@
 
           <div class="balance-label">Капитал</div>
           <div class="balance"><span id="cash">5 000</span> ₽</div>
-          <div class="stats-row">
-            <div class="stat"><span>Доход / мин</span><strong><span id="incomePerMin">0</span> ₽</strong></div>
-            <div class="stat"><span>Энергия</span><strong><span id="energy">10</span>/<span id="maxEnergy">10</span> ⚡</strong></div>
-            <div class="stat"><span>Опыт</span><strong><span id="xp">0</span> XP</strong></div>
+          <div class="stats-row premium-stats">
+            <div class="stat stat-income">
+              <div class="stat-icon">↗</div>
+              <div class="stat-copy">
+                <span class="stat-label">Доход / мин</span>
+                <strong class="stat-value"><span id="incomePerMin">0</span><small>₽</small></strong>
+                <span class="stat-caption">Пассивный доход</span>
+              </div>
+            </div>
+
+            <div class="stat stat-energy">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-copy">
+                <span class="stat-label">Энергия</span>
+                <strong class="stat-value"><span id="energy">10</span><small>/ <span id="maxEnergy">10</span></small></strong>
+                <span class="stat-caption">Для сделок</span>
+              </div>
+            </div>
+
+            <div class="stat stat-xp">
+              <div class="stat-icon">✦</div>
+              <div class="stat-copy">
+                <span class="stat-label">Опыт</span>
+                <strong class="stat-value"><span id="xp">0</span><small>XP</small></strong>
+                <span class="stat-caption">До нового уровня</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -100,6 +123,35 @@
         </section>
       </section>
 
+      <section id="tab-store" class="tab-page">
+        <section class="section first-section">
+          <div class="section-head">
+            <div><div class="eyebrow">TELEGRAM STARS</div><h2>Магазин</h2></div>
+            <button id="refreshStoreBtn" class="small-btn">Обновить</button>
+          </div>
+
+          <div class="store-hero">
+            <div class="store-hero-icon">⭐</div>
+            <div>
+              <strong>Поддержи игру и ускорь развитие</strong>
+              <p>Покупки проходят через Telegram Stars. Все ₽ здесь — только игровая валюта.</p>
+            </div>
+          </div>
+
+          <div id="storeProducts" class="store-grid"></div>
+
+          <div class="section-head store-history-head">
+            <div><div class="eyebrow">ИСТОРИЯ</div><h2>Мои покупки</h2></div>
+          </div>
+          <div id="purchaseHistory" class="purchase-history"></div>
+
+          <div class="store-legal">
+            Покупки не дают реальные рубли и не подлежат выводу из игры.
+            По вопросам оплаты напиши боту <strong>/paysupport</strong>.
+          </div>
+        </section>
+      </section>
+
       <section id="tab-profile" class="tab-page">
         <section class="section first-section">
           <div class="section-head">
@@ -110,6 +162,7 @@
             <div class="avatar big-avatar" id="profileAvatar">Б</div>
             <h3 id="profileName">Игрок</h3>
             <p id="profileUsername" class="muted">@username</p>
+            <div id="profileBadges" class="profile-badges"></div>
 
             <div class="profile-grid">
               <div><span>Уровень</span><strong id="profileLevel">1</strong></div>
@@ -124,6 +177,27 @@
             <button id="resetBtn" class="danger-btn">Сбросить локальный прогресс</button>
           </div>
         </section>
+
+        <section id="loginSection" class="section profile-extra-section">
+          <div class="section-head">
+            <div><div class="eyebrow">7 ДНЕЙ</div><h2>Серия входов</h2></div>
+          </div>
+          <div id="loginStreak" class="login-card"></div>
+        </section>
+
+        <section class="section profile-extra-section">
+          <div class="section-head">
+            <div><div class="eyebrow">РОСТ</div><h2>Награды за уровни</h2></div>
+          </div>
+          <div id="levelRewards" class="level-rewards"></div>
+        </section>
+
+        <section class="section profile-extra-section">
+          <div class="section-head">
+            <div><div class="eyebrow">КОЛЛЕКЦИЯ</div><h2>Достижения</h2></div>
+          </div>
+          <div id="achievements" class="achievement-list"></div>
+        </section>
       </section>
     </main>
 
@@ -131,6 +205,7 @@
       <button class="nav-btn active" data-tab="home"><span>💼</span><small>Бизнес</small></button>
       <button class="nav-btn" data-tab="rating"><span>🏆</span><small>Рейтинг</small></button>
       <button class="nav-btn" data-tab="friends"><span>👥</span><small>Друзья</small></button>
+      <button class="nav-btn" data-tab="store"><span>⭐</span><small>Магазин</small></button>
       <button class="nav-btn" data-tab="profile"><span>👤</span><small>Профиль</small></button>
     </nav>
   </div>
@@ -148,7 +223,7 @@
     </div>
   </div>
 
-  <script src="config.js?v=4"></script>
-  <script src="app.js?v=4"></script>
+  <script src="config.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
