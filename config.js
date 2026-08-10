@@ -19,6 +19,12 @@ window.addEventListener("load", () => {
         const storeFix = document.createElement("script");
         storeFix.src = `store-v35.js?v=35-${Date.now()}`;
         storeFix.async = false;
+        storeFix.onload = () => {
+          const ux = document.createElement("script");
+          ux.src = `ux-v37.js?v=37-${Date.now()}`;
+          ux.async = false;
+          document.body.appendChild(ux);
+        };
         document.body.appendChild(storeFix);
       };
       document.body.appendChild(admin);
