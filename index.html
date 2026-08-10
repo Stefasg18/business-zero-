@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1020" />
-  <title>Бизнес с нуля 3.1</title>
+  <title>Бизнес с нуля 3.7.2</title>
   <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
-  <link rel="stylesheet" href="styles.css?v=8" />
-  <link rel="stylesheet" href="minigame.css?v=1" />
+  <link rel="stylesheet" href="styles.css?v=372" />
+  <link rel="stylesheet" href="minigame.css?v=372" />
 </head>
 <body>
   <div class="app">
     <header class="topbar">
       <div>
-        <div class="eyebrow">BUSINESS GAME · 3.1</div>
+        <div class="eyebrow">BUSINESS GAME · 3.7.2</div>
         <h1>Бизнес с нуля</h1>
       </div>
       <div class="top-actions">
@@ -123,7 +123,7 @@
           </div>
           <div class="info-card">
             <strong>🏆 ТОП предпринимателей</strong>
-            <p>Рейтинг сортируется по игровому капиталу. После подключения сервера здесь будут видны все реальные игроки.</p>
+            <p>Рейтинг сортируется по игровому капиталу.</p>
           </div>
           <div id="leaderboard" class="leaderboard"></div>
         </section>
@@ -137,10 +137,10 @@
           <div class="ref-card">
             <div class="ref-emoji">🤝</div>
             <h3>Развивайтесь вместе</h3>
-            <p>После подключения сервера приглашённый игрок получит бонус, а ты — награду за друга.</p>
+            <p>Друг получает +1 000 ₽ на старте, а ты — 3 000 ₽ после того, как он достигнет 5 уровня и сделает 10 сделок.</p>
             <div class="ref-stats">
               <div><span>Друзей</span><strong id="refCount">0</strong></div>
-              <div><span>Бонус за друга</span><strong>1 000 ₽</strong></div>
+              <div><span>Бонус за друга</span><strong>3 000 ₽</strong></div>
             </div>
             <div id="refLink" class="ref-link">Открой приложение внутри Telegram</div>
             <button id="copyRefBtn" class="primary-btn">Скопировать ссылку</button>
@@ -197,7 +197,7 @@
             </div>
 
             <div id="onlineNote" class="status-note">
-              Сейчас включён демо-режим. Следующий шаг — подключение общей базы игроков.
+              ONLINE-режим: прогресс хранится на сервере.
             </div>
             <button id="resetBtn" class="danger-btn">Сбросить локальный прогресс</button>
           </div>
@@ -205,7 +205,7 @@
 
         <section id="loginSection" class="section profile-extra-section">
           <div class="section-head">
-            <div><div class="eyebrow">7 ДНЕЙ</div><h2>Серия входов</h2></div>
+            <div><div class="eyebrow">30 ДНЕЙ</div><h2>Серия входов</h2></div>
           </div>
           <div id="loginStreak" class="login-card"></div>
         </section>
@@ -284,8 +284,8 @@
     </div>
   </div>
 
-  <script src="config.js?v=8"></script>
-  <script src="app.js?v=8"></script>
-  <script src="minigame.js?v=1"></script>
+  <script src="config.js?v=372"></script>
+  <script src="app.js?v=372"></script>
+  <script src="minigame.js?v=372"></script>
 </body>
 </html>
