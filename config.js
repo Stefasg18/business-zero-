@@ -4,8 +4,14 @@ window.BZ_CONFIG = {
 };
 
 window.addEventListener("load", () => {
-  const script = document.createElement("script");
-  script.src = `progression-v32.js?v=32-${Date.now()}`;
-  script.async = false;
-  document.body.appendChild(script);
+  const progression = document.createElement("script");
+  progression.src = `progression-v32.js?v=32-${Date.now()}`;
+  progression.async = false;
+  progression.onload = () => {
+    const security = document.createElement("script");
+    security.src = `security-v33.js?v=33-${Date.now()}`;
+    security.async = false;
+    document.body.appendChild(security);
+  };
+  document.body.appendChild(progression);
 });
