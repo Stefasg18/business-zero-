@@ -21,9 +21,16 @@ const BUSINESS_CATALOG = [
   {id:"agency",icon:"🏢",name:"Digital-агентство",price:240000,income:1450},
 ];
 
+const LOCAL_QUEST_DEFS = [
+  {id:"deals",title:"Сделай 3 сделки",icon:"🤝",target:3,rewardCash:600,rewardXp:35},
+  {id:"profit",title:"Заработай 2 000 ₽ на сделках",icon:"💸",target:2000,rewardCash:900,rewardXp:50},
+  {id:"business",title:"Купи или улучши бизнес",icon:"🏪",target:1,rewardCash:1200,rewardXp:70}
+];
+
 const DEFAULT_STATE = {
   cash:5000,energy:10,maxEnergy:10,xp:0,level:1,businesses:{},
-  lastCollectAt:Date.now(),lastEnergyAt:Date.now(),lastBonusDate:null,referralCount:0
+  lastCollectAt:Date.now(),lastEnergyAt:Date.now(),lastBonusDate:null,referralCount:0,
+  questDate:null,quests:[]
 };
 
 let state = loadLocal();
@@ -50,6 +57,24 @@ async function api(path, options={}){
   const data = await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(data.error||`HTTP ${res.status}`);
   return data;
+}
+
+
+function ensureLocalQuests(){
+  if(ONLINE_MODE)return;
+  const today=todayKey();
+  if(state.questDate!==today || !Array.isArray(state.quests) || state.quests.length!==LOCAL_QUEST_DEFS.length){
+    state.questDate=today;
+    state.quests=LOCAL_QUEST_DEFS.map(q=>({...q,progress:0,claimed:false,complete:false}));
+    saveLocal();
+  }
+}
+function updateLocalQuest(id,amount){
+  ensureLocalQuests();
+  const q=state.quests.find(x=>x.id===id);if(!q)return;
+  q.progress=Math.max(0,Number(q.progress||0)+Number(amount||0));
+  q.complete=q.progress>=q.target;
+  saveLocal();
 }
 
 function totalIncomePerMin(){
@@ -111,6 +136,55 @@ function renderBusinesses(){
   el.querySelectorAll("[data-business]").forEach(btn=>btn.addEventListener("click",()=>buyOrUpgrade(btn.dataset.business)));
 }
 
+
+function renderQuests(){
+  const el=document.getElementById("dailyQuests");if(!el)return;
+  if(!ONLINE_MODE)ensureLocalQuests();
+  const quests=Array.isArray(state.quests)?state.quests:[];
+  if(!quests.length){
+    el.innerHTML='<div class="info-card">Задания загружаются...</div>';
+    return;
+  }
+  const done=quests.filter(q=>q.claimed).length;
+  el.innerHTML=quests.map(q=>{
+    const progress=Math.min(Number(q.progress||0),Number(q.target||1));
+    const pct=Math.max(0,Math.min(100,Math.round(progress/Number(q.target||1)*100)));
+    const progressLabel=q.id==="profit"?`${fmt(progress)} / ${fmt(q.target)} ₽`:`${fmt(progress)} / ${fmt(q.target)}`;
+    const btn=q.claimed
+      ? '<button class="quest-btn claimed" disabled>✓ Награда получена</button>'
+      : q.complete
+        ? `<button class="quest-btn ready" data-claim-quest="${q.id}">Забрать +${fmt(q.rewardCash)} ₽</button>`
+        : '<button class="quest-btn" disabled>Продолжай выполнять</button>';
+    return `<article class="quest-card">
+      <div class="quest-top">
+        <div class="quest-icon">${q.icon}</div>
+        <div class="quest-main">
+          <div class="quest-title">${escapeHtml(q.title)}</div>
+          <div class="quest-reward">Награда: ${fmt(q.rewardCash)} ₽ + ${fmt(q.rewardXp)} XP</div>
+        </div>
+      </div>
+      <div class="quest-progress-text"><span>Прогресс</span><strong>${progressLabel}</strong></div>
+      <div class="quest-bar"><span style="width:${pct}%"></span></div>
+      <div class="quest-actions">${btn}</div>
+    </article>`;
+  }).join("") + (done===quests.length?'<div class="quest-summary">🔥 Все задания на сегодня выполнены. Новые появятся завтра.</div>':'');
+  el.querySelectorAll("[data-claim-quest]").forEach(btn=>btn.addEventListener("click",()=>claimQuest(btn.dataset.claimQuest)));
+}
+
+async function claimQuest(id){
+  if(ONLINE_MODE){
+    try{
+      const d=await api("/api/quest/claim",{method:"POST",body:JSON.stringify({questId:id})});
+      applyServerState(d.state);notify("success");showToast(d.message);
+    }catch(e){showToast(e.message)}
+    return;
+  }
+  ensureLocalQuests();
+  const q=state.quests.find(x=>x.id===id);
+  if(!q||!q.complete||q.claimed)return;
+  q.claimed=true;state.cash+=q.rewardCash;addXp(q.rewardXp);saveLocal();notify("success");showToast(`Награда +${fmt(q.rewardCash)} ₽`);render();
+}
+
 function render(){
   regenEnergy();
   document.getElementById("cash").textContent=fmt(state.cash);
@@ -123,7 +197,7 @@ function render(){
   document.getElementById("profileCash").textContent=fmt(state.cash);
   document.getElementById("profileXp").textContent=fmt(state.xp);
   document.getElementById("profileBusinesses").textContent=Object.keys(state.businesses||{}).length;
-  renderDeals();renderBusinesses();renderReferral();
+  renderDeals();renderBusinesses();renderReferral();renderQuests();
 }
 
 function applyServerState(s){
@@ -132,6 +206,7 @@ function applyServerState(s){
     cash:Number(s.cash),energy:Number(s.energy),maxEnergy:Number(s.maxEnergy),
     xp:Number(s.xp),level:Number(s.level),businesses:s.businesses||{},
     referralCount:Number(s.referralCount||0),
+    quests:Array.isArray(s.quests)?s.quests:state.quests,
     lastBonusDate:s.lastBonusDate||null,
     lastCollectAt:Date.now(),lastEnergyAt:Date.now()
   };
@@ -146,8 +221,9 @@ async function runDeal(id){
   const d=DEALS.find(x=>x.id===id);if(!d||state.energy<d.energy)return;
   state.energy-=d.energy;state.lastEnergyAt=Date.now();
   const failed=Math.random()<d.fail;
+  updateLocalQuest("deals",1);
   if(failed){const loss=Math.min(state.cash,d.failLoss);state.cash-=loss;addXp(8);notify("error");showToast(`Неудача: −${fmt(loss)} ₽`)}
-  else{const profit=Math.floor(d.min+Math.random()*(d.max-d.min+1));state.cash+=profit;addXp(20+d.energy*4);notify("success");showToast(`Сделка успешна: +${fmt(profit)} ₽`)}
+  else{const profit=Math.floor(d.min+Math.random()*(d.max-d.min+1));state.cash+=profit;updateLocalQuest("profit",profit);addXp(20+d.energy*4);notify("success");showToast(`Сделка успешна: +${fmt(profit)} ₽`)}
   saveLocal();render();
 }
 
@@ -159,7 +235,7 @@ async function buyOrUpgrade(id){
   const b=BUSINESS_CATALOG.find(x=>x.id===id);if(!b)return;
   const level=state.businesses?.[id]?.level||0,price=level===0?b.price:Math.floor(b.price*Math.pow(1.65,level));
   if(state.cash<price){showToast(`Не хватает ${fmt(price-state.cash)} ₽`);return}
-  state.cash-=price;state.businesses[id]={level:level+1};addXp(level===0?70:45);saveLocal();haptic("medium");showToast(level===0?`${b.name} открыт!`:`${b.name}: уровень ${level+1}`);render();
+  state.cash-=price;state.businesses[id]={level:level+1};updateLocalQuest("business",1);addXp(level===0?70:45);saveLocal();haptic("medium");showToast(level===0?`${b.name} открыт!`:`${b.name}: уровень ${level+1}`);render();
 }
 
 async function collectIncome(){
@@ -234,7 +310,7 @@ async function bootOnline(){
     await api("/api/session",{method:"POST",body:JSON.stringify({startParam})});
     const d=await api("/api/state");applyServerState(d.state);
     document.getElementById("modeBadge").textContent="ONLINE";document.getElementById("modeBadge").classList.add("online");
-    document.getElementById("onlineNote").textContent="Онлайн-режим: прогресс хранится на сервере и привязан к Telegram ID.";
+    document.getElementById("onlineNote").textContent="Онлайн-режим: баланс, бизнесы, рейтинг и ежедневные задания хранятся на сервере.";
     document.getElementById("onlineNote").classList.add("online");
     document.getElementById("resetBtn").style.display="none";
   }catch(e){
