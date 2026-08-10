@@ -25,9 +25,7 @@ window.addEventListener("load", () => {
                     load("ui-v39.js", () => {
                       load("passive-income-v40.js", () => {
                         load("quest-state-v401.js", () => {
-                          load("referral-v402.js", () => {
-                            load("arcade-hub-v41.js");
-                          });
+                          load("referral-v402.js");
                         });
                       });
                     });
