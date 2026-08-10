@@ -61,10 +61,7 @@
       if(title) title.textContent = 'XP-тренажёр';
       if(eyebrow) eyebrow.textContent = 'ИГРА БЕЗ ЭНЕРГИИ';
       const xp = document.getElementById('xpPanel37');
-      if(xp){
-        body.appendChild(xp);
-        try { window.updateXpPanel?.(); } catch(e) { console.error('updateXpPanel', e); }
-      }
+      if(xp) body.appendChild(xp);
     }
 
     shell.classList.remove('hidden');
@@ -80,14 +77,12 @@
   function bind(){
     const parking = ensureParking();
 
-    // Park original content immediately so it can never be destroyed by sheet.innerHTML/replaceChildren.
     document.querySelectorAll('.q37-content-section').forEach(section => {
       if(section.parentElement?.id !== parking.id) parking.appendChild(section);
     });
     const xp = document.getElementById('xpPanel37');
     if(xp && xp.parentElement?.id !== parking.id) parking.appendChild(xp);
 
-    // Capture phase wins over the legacy onclick handlers from ux-v37.js.
     document.addEventListener('click', (event) => {
       const opener = event.target.closest?.('[data-open37]');
       if(opener){
@@ -108,17 +103,14 @@
     if(version) version.textContent = `BUSINESS GAME · ${VERSION}`;
     document.title = `Бизнес с нуля ${VERSION}`;
 
-    // Correct old hard-coded labels left from early versions.
     const loginEyebrow = document.querySelector('#loginSection .section-head .eyebrow');
     if(loginEyebrow) loginEyebrow.textContent = '30 ДНЕЙ';
 
     const refStats = document.querySelector('.ref-stats');
     if(refStats){
       const blocks = refStats.querySelectorAll('div');
-      if(blocks[1]){
-        const strong = blocks[1].querySelector('strong');
-        if(strong) strong.textContent = '3 000 ₽';
-      }
+      const strong = blocks[1]?.querySelector('strong');
+      if(strong) strong.textContent = '3 000 ₽';
     }
   }
 
@@ -140,6 +132,5 @@
   `;
   document.head.appendChild(style);
 
-  // All previous scripts are injected after window.load. Give them one frame to finish first.
-  setTimeout(bind, 350);
+  bind();
 })();
