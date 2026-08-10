@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1020" />
-  <title>Бизнес с нуля 3.7.2</title>
+  <title>Бизнес с нуля 4.0</title>
   <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
-  <link rel="stylesheet" href="styles.css?v=372" />
-  <link rel="stylesheet" href="minigame.css?v=372" />
+  <link rel="stylesheet" href="styles.css?v=400" />
+  <link rel="stylesheet" href="minigame.css?v=400" />
 </head>
 <body>
   <div class="app">
     <header class="topbar">
       <div>
-        <div class="eyebrow">BUSINESS GAME · 3.7.2</div>
+        <div class="eyebrow">BUSINESS GAME · 4.0</div>
         <h1>Бизнес с нуля</h1>
       </div>
       <div class="top-actions">
@@ -42,7 +42,7 @@
               <div class="stat-copy">
                 <span class="stat-label">Доход / мин</span>
                 <strong class="stat-value"><span id="incomePerMin">0</span><small>₽</small></strong>
-                <span class="stat-caption">Пассивный доход</span>
+                <span class="stat-caption">Начисляется автоматически</span>
               </div>
             </div>
 
@@ -68,21 +68,21 @@
 
         <section class="section mini-game-section">
           <div class="section-head">
-            <div><div class="eyebrow">ИГРА НА 20 СЕКУНД</div><h2>Бизнес-блиц</h2></div>
-            <span class="mini-live">⚡ Быстрый заработок</span>
+            <div><div class="eyebrow">АРКАДА</div><h2>Денежный поток</h2></div>
+            <span class="mini-live">⚡ Без энергии</span>
           </div>
           <div class="mini-game-card">
             <div class="mini-game-glow"></div>
             <div class="mini-game-copy">
-              <div class="mini-game-icon">🧠</div>
+              <div class="mini-game-icon">💸</div>
               <div>
-                <h3>Выбери более выгодную сделку</h3>
-                <p>5 быстрых раундов. Считай прибыль и зарабатывай на реальных игровых сделках.</p>
+                <h3>Собирай прибыль и держи комбо</h3>
+                <p>Быстрая аркада: собирай деньги и бонусы, избегай расходов и получай игровые ₽ + XP.</p>
               </div>
             </div>
             <div class="mini-game-stats">
-              <div><span>Энергия</span><strong id="miniAttempts">—</strong></div>
-              <div><span>Раундов</span><strong id="miniBest">—</strong></div>
+              <div><span>Режим</span><strong id="miniAttempts">30 сек</strong></div>
+              <div><span>Комбо</span><strong id="miniBest">×1</strong></div>
               <div><span>Заработок</span><strong id="miniEarned">—</strong></div>
             </div>
             <button id="miniGameStartBtn" class="mini-game-start">Играть сейчас</button>
@@ -109,7 +109,7 @@
         <section class="section">
           <div class="section-head">
             <div><div class="eyebrow">ПАССИВНЫЙ ДОХОД</div><h2>Мои бизнесы</h2></div>
-            <button id="collectBtn" class="small-btn">Забрать доход</button>
+            <button id="collectBtn" class="small-btn" style="display:none" disabled>Автодоход</button>
           </div>
           <div id="businesses" class="business-list"></div>
         </section>
@@ -242,33 +242,11 @@
     <div class="mini-modal-card">
       <div class="mini-modal-top">
         <div>
-          <div class="eyebrow">БИЗНЕС-БЛИЦ</div>
-          <h3 id="miniRoundTitle">Раунд 1 / 5</h3>
+          <div class="eyebrow">ДЕНЕЖНЫЙ ПОТОК</div>
+          <h3 id="miniRoundTitle">Аркада</h3>
         </div>
         <button class="mini-close" data-close-mini>×</button>
       </div>
-
-      <div class="mini-timer"><span id="miniTimerBar"></span></div>
-      <div id="miniScoreLine" class="mini-score-line">Счёт: 0 / 5</div>
-
-      <div id="miniQuestion" class="mini-question">
-        <div class="mini-question-label">Где чистая прибыль выше?</div>
-        <div class="mini-options">
-          <button class="mini-option" data-mini-choice="left">
-            <span class="mini-option-letter">A</span>
-            <strong id="miniLeftRevenue">—</strong>
-            <small>Выручка</small>
-            <div><span>Расходы</span><b id="miniLeftCost">—</b></div>
-          </button>
-          <button class="mini-option" data-mini-choice="right">
-            <span class="mini-option-letter">B</span>
-            <strong id="miniRightRevenue">—</strong>
-            <small>Выручка</small>
-            <div><span>Расходы</span><b id="miniRightCost">—</b></div>
-          </button>
-        </div>
-      </div>
-
       <div id="miniResult" class="mini-result hidden"></div>
     </div>
   </div>
@@ -284,8 +262,8 @@
     </div>
   </div>
 
-  <script src="config.js?v=372"></script>
-  <script src="app.js?v=372"></script>
-  <script src="minigame.js?v=372"></script>
+  <script src="config.js?v=400"></script>
+  <script src="app.js?v=400"></script>
+  <script src="minigame.js?v=400"></script>
 </body>
 </html>
