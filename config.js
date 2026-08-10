@@ -23,6 +23,12 @@ window.addEventListener("load", () => {
           const ux = document.createElement("script");
           ux.src = `ux-v37.js?v=37-${Date.now()}`;
           ux.async = false;
+          ux.onload = () => {
+            const patch = document.createElement("script");
+            patch.src = `ux-v37-patch.js?v=37-${Date.now()}`;
+            patch.async = false;
+            document.body.appendChild(patch);
+          };
           document.body.appendChild(ux);
         };
         document.body.appendChild(storeFix);
