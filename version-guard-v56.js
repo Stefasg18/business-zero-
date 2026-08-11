@@ -1,12 +1,12 @@
 (()=>{
-  if(window.__BZ_VERSION_GUARD_V56__)return;
-  window.__BZ_VERSION_GUARD_V56__=true;
-  const VERSION='5.6';
+  if(window.__BZ_VERSION_GUARD_V561__)return;
+  window.__BZ_VERSION_GUARD_V561__=true;
+  const VERSION='5.6.1';
   window.BZ_APP_VERSION=VERSION;
 
   function enforce(){
     const badge=document.querySelector('.topbar .eyebrow');
-    if(badge)badge.textContent=`BUSINESS GAME · ${VERSION}`;
+    if(badge&&badge.textContent!==`BUSINESS GAME · ${VERSION}`)badge.textContent=`BUSINESS GAME · ${VERSION}`;
     document.title=`Бизнес с нуля ${VERSION}`;
   }
 
@@ -30,13 +30,9 @@
   }
 
   enforce();
-  setTimeout(enforce,0);
-  setTimeout(enforce,700);
-  setTimeout(enforce,1800);
-  window.addEventListener('load',()=>{enforce();setTimeout(diagnoseTelegram,250)});
+  setTimeout(enforce,500);
+  setTimeout(enforce,1500);
+  window.addEventListener('load',()=>{enforce();setTimeout(diagnoseTelegram,250)},{once:true});
   window.addEventListener('pageshow',()=>{enforce();setTimeout(diagnoseTelegram,100)});
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){enforce();setTimeout(diagnoseTelegram,100)}});
-
-  const observer=new MutationObserver(enforce);
-  observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true});
 })();
