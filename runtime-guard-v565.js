@@ -19,7 +19,14 @@
       if(['ЗАГРУЗКА','DEMO','TG ERROR'].includes(text)){
         mode.textContent='ONLINE';
         mode.classList.add('online');
+        return;
       }
+      if(text==='ONLINE'){
+        mode.classList.add('online');
+        return;
+      }
+      // Preserve truthful API/network error text and never style it as ONLINE.
+      mode.classList.remove('online');
       return;
     }
     if(document.readyState==='complete' && String(tg?.platform||'unknown')!=='unknown'){
