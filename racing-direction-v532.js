@@ -2,7 +2,7 @@
   if(window.__BZ_RACING_DIRECTION_V532__)return;
   window.__BZ_RACING_DIRECTION_V532__=true;
 
-  const VERSION='5.4';
+  const VERSION='5.5';
   const NEEDLE_SPEED=1.45;
   window.BZ_APP_VERSION=VERSION;
 
