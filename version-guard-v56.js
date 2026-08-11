@@ -1,7 +1,7 @@
 (()=>{
-  if(window.__BZ_VERSION_GUARD_V562__)return;
-  window.__BZ_VERSION_GUARD_V562__=true;
-  const VERSION='5.6.2';
+  if(window.__BZ_VERSION_GUARD_V563__)return;
+  window.__BZ_VERSION_GUARD_V563__=true;
+  const VERSION='5.6.3';
   window.BZ_APP_VERSION=VERSION;
 
   function enforce(){
