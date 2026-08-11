@@ -1,6 +1,4 @@
 (() => {
-  const VERSION = '3.7.2';
-
   function getSheet(){ return document.getElementById('quickSheet37'); }
   function getBody(){ return document.getElementById('q37Body'); }
 
@@ -34,10 +32,8 @@
     const shell = getSheet();
     const body = getBody();
     if(!shell || !body) return;
-
     parkCurrent();
     body.replaceChildren();
-
     const title = document.getElementById('q37Title');
     const eyebrow = document.getElementById('q37Eyebrow');
 
@@ -45,18 +41,12 @@
       if(title) title.textContent = 'Сделки';
       if(eyebrow) eyebrow.textContent = 'БЫСТРЫЕ ДЕНЬГИ';
       const section = findSection('deals');
-      if(section){
-        body.appendChild(section);
-        try { window.renderDeals?.(); } catch(e) { console.error('renderDeals', e); }
-      }
+      if(section){ body.appendChild(section); try { window.renderDeals?.(); } catch(e) { console.error('renderDeals', e); } }
     } else if(type === 'businesses'){
       if(title) title.textContent = 'Мои бизнесы';
       if(eyebrow) eyebrow.textContent = 'ПАССИВНЫЙ ДОХОД';
       const section = findSection('businesses');
-      if(section){
-        body.appendChild(section);
-        try { window.renderBusinesses?.(); } catch(e) { console.error('renderBusinesses', e); }
-      }
+      if(section){ body.appendChild(section); try { window.renderBusinesses?.(); } catch(e) { console.error('renderBusinesses', e); } }
     } else if(type === 'xp'){
       if(title) title.textContent = 'XP-тренажёр';
       if(eyebrow) eyebrow.textContent = 'ИГРА БЕЗ ЭНЕРГИИ';
@@ -76,7 +66,6 @@
 
   function bind(){
     const parking = ensureParking();
-
     document.querySelectorAll('.q37-content-section').forEach(section => {
       if(section.parentElement?.id !== parking.id) parking.appendChild(section);
     });
@@ -98,10 +87,6 @@
         closeSafe();
       }
     }, true);
-
-    const version = document.querySelector('.topbar .eyebrow');
-    if(version) version.textContent = `BUSINESS GAME · ${VERSION}`;
-    document.title = `Бизнес с нуля ${VERSION}`;
 
     const loginEyebrow = document.querySelector('#loginSection .section-head .eyebrow');
     if(loginEyebrow) loginEyebrow.textContent = '30 ДНЕЙ';
@@ -131,6 +116,5 @@
     }
   `;
   document.head.appendChild(style);
-
   bind();
 })();
