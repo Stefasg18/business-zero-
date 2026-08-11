@@ -55,6 +55,33 @@
         }),timeout(ms)
       ]);
     }
+    function preloadScript(src){
+      const l=document.createElement('link');l.rel='preload';l.as='script';l.href=src;
+      document.head.appendChild(l);
+    }
+    function installTelegramFallback(){
+      if(window.Telegram?.WebApp?.initData)return false;
+      const merged=new URLSearchParams(location.search);
+      const hash=new URLSearchParams(String(location.hash||'').replace(/^#/,''));
+      for(const [k,v] of hash.entries())if(!merged.has(k))merged.set(k,v);
+      const initData=merged.get('tgWebAppData')||'';
+      if(!initData)return false;
+      let user={};
+      try{const raw=new URLSearchParams(initData).get('user');if(raw)user=JSON.parse(raw)}catch{}
+      const old=window.Telegram?.WebApp||{};
+      window.Telegram=window.Telegram||{};
+      window.Telegram.WebApp={
+        ...old,
+        initData,
+        initDataUnsafe:{...(old.initDataUnsafe||{}),user},
+        platform:old.platform||merged.get('tgWebAppPlatform')||'ios',
+        version:old.version||merged.get('tgWebAppVersion')||'8.0',
+        ready:typeof old.ready==='function'?old.ready:()=>{},
+        expand:typeof old.expand==='function'?old.expand:()=>{},
+        HapticFeedback:old.HapticFeedback||{impactOccurred(){},notificationOccurred(){}}
+      };
+      return true;
+    }
 
     async function boot(){
       try{
@@ -68,7 +95,6 @@
         document.body.innerHTML=parsed.body.innerHTML;
         const diag=document.createElement('div');diag.id='bzBoot563';diag.innerHTML='<strong>Загрузка 5.6.3</strong><span id="bzBoot563Text">Интерфейс готов…</span>';
         document.body.appendChild(diag);
-        // references changed after replacing body
         window.__bz563Status=diag;
         await Promise.all([loadCss(`styles.css?v=${BUILD}`),loadCss(`minigame.css?v=${BUILD}`)]);
         await frame();
@@ -78,11 +104,6 @@
           if(t)t.textContent=text;if(d){d.classList.remove('ok','err');if(kind)d.classList.add(kind)}
         };
 
-        // Telegram SDK must never be allowed to block the shell.
-        q('Подключаю Telegram…');
-        try{await loadScript('https://telegram.org/js/telegram-web-app.js?63',3500)}catch(e){remember(e)}
-        await frame();
-
         const modules=[
           'app.js','minigame.js','progression-v32.js','security-v33.js','admin-v34.js','store-v35.js',
           'ux-v37.js','ux-v37-patch.js','mobile-fix-v371.js','stability-v372.js','arcade-v39.js','ui-v39.js',
@@ -91,6 +112,15 @@
           'game-v50.js','v50-polish.js','season-market-fix-v502.js','cards-v51.js','cosmetic-access-v52.js',
           'social-racing-v53.js','racing-direction-v532.js','performance-v54.js','safe-overlay-v561.js','version-guard-v56.js'
         ];
+
+        // Download every local module in parallel, then execute in the safe legacy order below.
+        modules.forEach(name=>preloadScript(`${name}?v=${BUILD}`));
+
+        // Telegram SDK must never be allowed to block the already-painted shell.
+        q('Подключаю Telegram…');
+        try{await loadScript('https://telegram.org/js/telegram-web-app.js?63',5000)}catch(e){remember(e)}
+        if(!window.Telegram?.WebApp?.initData)installTelegramFallback();
+        await frame();
 
         const nativeAdd=window.addEventListener.bind(window);
         window.addEventListener=function(type,listener,options){
@@ -103,7 +133,7 @@
           const name=modules[i];
           q(`Модуль ${i+1}/${modules.length}: ${name}`);
           await frame();
-          try{await loadScript(`${name}?v=${BUILD}`,8000)}catch(e){remember(e)}
+          try{await loadScript(`${name}?v=${BUILD}`,6500)}catch(e){remember(e)}
         }
         window.addEventListener=nativeAdd;
 
