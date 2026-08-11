@@ -23,6 +23,9 @@
   function enforceVersion(){
     const top=document.querySelector('.topbar .eyebrow');
     if(top)top.textContent=`BUSINESS GAME · ${VERSION}`;
+    document.querySelectorAll('.v53-sheet header span').forEach(x=>x.textContent=`BUSINESS GAME · ${VERSION}`);
+    const social=document.querySelector('.v53-head>div>span');
+    if(social)social.textContent=`ДРУЗЬЯ · ${VERSION}`;
     document.title=`Бизнес с нуля ${VERSION}`;
   }
 
