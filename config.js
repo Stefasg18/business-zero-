@@ -6,7 +6,7 @@ window.BZ_CONFIG = {
 window.addEventListener("load", () => {
   const load = (src, done) => {
     const script = document.createElement("script");
-    script.src = `${src}?v=500-${Date.now()}`;
+    script.src = `${src}?v=501-${Date.now()}`;
     script.async = false;
     script.onload = () => done?.();
     script.onerror = () => console.error(`Не удалось загрузить ${src}`);
@@ -33,7 +33,9 @@ window.addEventListener("load", () => {
                                     load("profile-polish-v453.js", () => {
                                       load("stat-text-fix-v454.js", () => {
                                         load("affiliate-v46.js", () => {
-                                          load("game-v50.js");
+                                          load("game-v50.js", () => {
+                                            load("v50-polish.js");
+                                          });
                                         });
                                       });
                                     });
