@@ -6,7 +6,7 @@ window.BZ_CONFIG = {
 window.addEventListener("load", () => {
   const load = (src, done) => {
     const script = document.createElement("script");
-    script.src = `${src}?v=510-${Date.now()}`;
+    script.src = `${src}?v=520-${Date.now()}`;
     script.async = false;
     script.onload = () => done?.();
     script.onerror = () => console.error(`Не удалось загрузить ${src}`);
@@ -36,7 +36,9 @@ window.addEventListener("load", () => {
                                           load("game-v50.js", () => {
                                             load("v50-polish.js", () => {
                                               load("season-market-fix-v502.js", () => {
-                                                load("cards-v51.js");
+                                                load("cards-v51.js", () => {
+                                                  load("cosmetic-access-v52.js");
+                                                });
                                               });
                                             });
                                           });
