@@ -38,7 +38,7 @@ window.BZ_APP_VERSION = "5.5.2";
     "party-arena-v55.js"
   ];
 
-  // Start all network requests immediately. Execution still happens in the proven order below.
+  // Fetch all modules in parallel as early as possible.
   for(const src of modules){
     const link=document.createElement('link');
     link.rel='preload';
@@ -54,24 +54,35 @@ window.BZ_APP_VERSION = "5.5.2";
       script.src=`${src}?v=${BUILD}${suffix}`;
       script.async=false;
       let settled=false;
-      const finish=ok=>{
+      let timer=0;
+
+      const settle=ok=>{
         if(settled)return;
         settled=true;
         clearTimeout(timer);
+        script.onload=null;
+        script.onerror=null;
         if(!ok)console.error(`Не удалось загрузить ${src}`);
         resolve(ok);
       };
-      script.onload=()=>finish(true);
-      script.onerror=()=>{
+
+      const retryOrFinish=()=>{
+        if(settled)return;
+        settled=true;
+        clearTimeout(timer);
+        script.onload=null;
+        script.onerror=null;
         script.remove();
         if(retry<1)loadOnce(src,retry+1).then(resolve);
-        else finish(false);
+        else{
+          console.error(`Не удалось загрузить ${src}`);
+          resolve(false);
+        }
       };
-      const timer=setTimeout(()=>{
-        script.remove();
-        if(retry<1)loadOnce(src,retry+1).then(resolve);
-        else finish(false);
-      },8000);
+
+      script.onload=()=>settle(true);
+      script.onerror=retryOrFinish;
+      timer=setTimeout(retryOrFinish,8000);
       document.body.appendChild(script);
     });
   }
@@ -82,9 +93,10 @@ window.BZ_APP_VERSION = "5.5.2";
     for(const src of modules)await loadOnce(src);
     window.__BZ_MODULES_READY__=true;
     window.dispatchEvent(new CustomEvent('bz:modules-ready'));
-    try{window.__BZ_FORCE_LAYOUT_RECOVERY__?.()}catch{}
   }
 
-  if(document.readyState==='complete')bootModules();
-  else window.addEventListener('load',bootModules,{once:true});
+  // Important: load patches after the base DOM/app scripts exist, but BEFORE window.load.
+  // This lets legacy modules register their own load handlers normally.
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootModules,{once:true});
+  else bootModules();
 })();
