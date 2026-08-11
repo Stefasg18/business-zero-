@@ -6,7 +6,7 @@ window.BZ_CONFIG = {
 window.addEventListener("load", () => {
   const load = (src, done) => {
     const script = document.createElement("script");
-    script.src = `${src}?v=440-${Date.now()}`;
+    script.src = `${src}?v=444-${Date.now()}`;
     script.async = false;
     script.onload = () => done?.();
     script.onerror = () => console.error(`Не удалось загрузить ${src}`);
@@ -26,7 +26,9 @@ window.addEventListener("load", () => {
                       load("passive-income-v40.js", () => {
                         load("quest-state-v401.js", () => {
                           load("referral-v402.js", () => {
-                            load("action-labels-v44.js");
+                            load("action-labels-v44.js", () => {
+                              load("profile-cosmetics-v44.js");
+                            });
                           });
                         });
                       });
