@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1020">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>Бизнес с нуля 5.6.1</title>
+  <style>
+    html,body{margin:0;min-height:100%;background:#0b1020;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .boot{min-height:100dvh;display:grid;place-items:center;padding:24px;text-align:center}.boot b{display:block;font-size:22px}.boot span{display:block;margin-top:8px;color:#8393af;font-size:13px}.boot i{display:block;width:34px;height:34px;margin:0 auto 16px;border:3px solid #2d3e60;border-top-color:#7a80ff;border-radius:50%;animation:r .8s linear infinite}@keyframes r{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+  <div class="boot" id="boot"><div><i></i><b>Бизнес с нуля</b><span>Загрузка версии 5.6.1…</span></div></div>
+  <script>
+  (async()=>{
+    try{
+      const r=await fetch(`index.html?source=561-${Date.now()}`,{cache:'no-store'});
+      if(!r.ok)throw new Error(`HTTP ${r.status}`);
+      let html=await r.text();
+      html=html.replace(/\s*<script\s+defer\s+src="ios-render-recovery-v551\.js\?v=560"><\/script>/i,'');
+      html=html.replaceAll('?v=560','?v=561');
+      html=html.replace(/Бизнес с нуля 5\.6/g,'Бизнес с нуля 5.6.1');
+      html=html.replace(/BUSINESS GAME · 5\.6/g,'BUSINESS GAME · 5.6.1');
+      document.open();
+      document.write(html);
+      document.close();
+    }catch(e){
+      const el=document.getElementById('boot');
+      if(el)el.innerHTML=`<div><b>Не удалось загрузить игру</b><span>${String(e?.message||e)}</span></div>`;
+    }
+  })();
+  </script>
+</body>
+</html>
