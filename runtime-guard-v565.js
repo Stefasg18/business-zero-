@@ -5,6 +5,7 @@
   window.BZ_APP_VERSION=VERSION;
 
   function enforceVersion(){
+    window.BZ_APP_VERSION=VERSION;
     const badge=document.querySelector('.topbar .eyebrow');
     if(badge&&badge.textContent!==`BUSINESS GAME · ${VERSION}`)badge.textContent=`BUSINESS GAME · ${VERSION}`;
     if(document.title!==`Бизнес с нуля ${VERSION}`)document.title=`Бизнес с нуля ${VERSION}`;
@@ -25,7 +26,6 @@
         mode.classList.add('online');
         return;
       }
-      // Preserve truthful API/network error text and never style it as ONLINE.
       mode.classList.remove('online');
       return;
     }
@@ -38,18 +38,35 @@
   function enforce(){enforceVersion();enforceMode()}
   enforce();
 
-  // Fast stabilization during startup, then a very light long-lived guard so legacy
-  // modules cannot restore obsolete version labels after later UI renders.
+  // Legacy feature modules still contain their historical release labels (3.9, 4.1, 5.5).
+  // Observe the top badge so any late/asynchronous rewrite is corrected immediately.
+  let observedBadge=null;
+  let badgeObserver=null;
+  function watchBadge(){
+    const badge=document.querySelector('.topbar .eyebrow');
+    if(!badge||badge===observedBadge)return;
+    badgeObserver?.disconnect();
+    observedBadge=badge;
+    badgeObserver=new MutationObserver(()=>{
+      if(badge.textContent!==`BUSINESS GAME · ${VERSION}`)badge.textContent=`BUSINESS GAME · ${VERSION}`;
+    });
+    badgeObserver.observe(badge,{childList:true,characterData:true,subtree:true});
+    enforceVersion();
+  }
+  watchBadge();
+  const bodyObserver=new MutationObserver(()=>watchBadge());
+  if(document.body)bodyObserver.observe(document.body,{childList:true,subtree:true});
+
   let ticks=0;
   const fast=setInterval(()=>{
-    enforce();
+    enforce();watchBadge();
     ticks+=1;
     if(ticks>=40){
       clearInterval(fast);
-      setInterval(enforce,5000);
+      setInterval(()=>{enforce();watchBadge()},5000);
     }
   },500);
 
-  window.addEventListener('pageshow',enforce);
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')enforce()});
+  window.addEventListener('pageshow',()=>{enforce();watchBadge()});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){enforce();watchBadge()}});
 })();
