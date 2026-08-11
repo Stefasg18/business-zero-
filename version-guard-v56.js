@@ -1,12 +1,15 @@
 (()=>{
-  if(window.__BZ_VERSION_GUARD_V563__)return;
-  window.__BZ_VERSION_GUARD_V563__=true;
-  const VERSION='5.6.3';
+  if(window.__BZ_VERSION_GUARD_V564__)return;
+  window.__BZ_VERSION_GUARD_V564__=true;
+  const VERSION='5.6.4';
   window.BZ_APP_VERSION=VERSION;
 
   function enforce(){
+    window.BZ_APP_VERSION=VERSION;
     const badge=document.querySelector('.topbar .eyebrow');
     if(badge&&badge.textContent!==`BUSINESS GAME · ${VERSION}`)badge.textContent=`BUSINESS GAME · ${VERSION}`;
+    document.querySelectorAll('.v53-head>div>span').forEach(x=>x.textContent='ДРУЗЬЯ');
+    document.querySelectorAll('.v53-sheet header span').forEach(x=>x.textContent=`ГОНКИ · ${VERSION}`);
     document.title=`Бизнес с нуля ${VERSION}`;
   }
 
@@ -30,7 +33,7 @@
   }
 
   enforce();
-  [0,400,1200,3000].forEach(ms=>setTimeout(enforce,ms));
+  [0,300,700,1200,2200,4000].forEach(ms=>setTimeout(enforce,ms));
   window.addEventListener('load',()=>{enforce();setTimeout(diagnoseTelegram,250)},{once:true});
   window.addEventListener('pageshow',()=>{enforce();setTimeout(diagnoseTelegram,100)});
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){enforce();setTimeout(diagnoseTelegram,100)}});
