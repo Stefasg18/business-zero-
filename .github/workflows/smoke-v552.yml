@@ -1,0 +1,46 @@
+name: Business Zero v5.5.2 frontend smoke
+on:
+  pull_request:
+    branches: [ main ]
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for GitHub Pages 5.5.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for i in {1..18}; do
+            html=$(curl -fsS --max-time 20 https://stefasg18.github.io/business-zero-/ || true)
+            if echo "$html" | grep -q 'BUSINESS GAME · 5.5.2' && echo "$html" | grep -q 'config.js?v=552' && echo "$html" | grep -q 'ios-render-recovery-v551.js?v=552'; then
+              ok=1
+              echo "live index is 5.5.2"
+              break
+            fi
+            echo "waiting for Pages, attempt $i"
+            sleep 10
+          done
+          test "$ok" = "1"
+      - name: Check new loader and recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          cfg=$(curl -fsS --max-time 20 'https://stefasg18.github.io/business-zero-/config.js?v=552')
+          rec=$(curl -fsS --max-time 20 'https://stefasg18.github.io/business-zero-/ios-render-recovery-v551.js?v=552')
+          echo "$cfg" | grep -q "BUILD='552'"
+          echo "$cfg" | grep -q "DOMContentLoaded"
+          echo "$cfg" | grep -q "rel='preload'"
+          echo "$rec" | grep -q "VERSION='5.5.2'"
+          echo "$rec" | grep -q "__BZ_IOS_RENDER_RECOVERY_V552__"
+      - name: Check critical assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in app.js progression-v32.js ui-v39.js game-v50.js cosmetic-access-v52.js social-racing-v53.js performance-v54.js party-arena-v55.js; do
+            code=$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 20 "https://stefasg18.github.io/business-zero-/$f?v=552")
+            echo "$f -> $code"
+            test "$code" = "200"
+          done
