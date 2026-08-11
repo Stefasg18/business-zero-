@@ -4,7 +4,7 @@
 
   const VERSION='5.6.5';
   const BUILD='565';
-  const CACHE='5655';
+  const CACHE='5656';
   const errors=[];
   window.BZ_APP_VERSION=VERSION;
   window.BZ_CONFIG={API_BASE:'https://business-zero-backend.onrender.com',BOT_USERNAME:'BusinessZeroGameBot'};
@@ -26,7 +26,7 @@
   function installTelegramFallback(){if(window.Telegram?.WebApp?.initData)return true;const merged=new URLSearchParams(location.search);const hash=new URLSearchParams(String(location.hash||'').replace(/^#/,''));for(const [k,v] of hash.entries())if(!merged.has(k))merged.set(k,v);const initData=merged.get('tgWebAppData')||'';if(!initData)return false;let user={};try{const raw=new URLSearchParams(initData).get('user');if(raw)user=JSON.parse(raw)}catch{}const old=window.Telegram?.WebApp||{};window.Telegram=window.Telegram||{};window.Telegram.WebApp={...old,initData,initDataUnsafe:{...(old.initDataUnsafe||{}),user},platform:old.platform||merged.get('tgWebAppPlatform')||'ios',version:old.version||merged.get('tgWebAppVersion')||'8.0',ready:typeof old.ready==='function'?old.ready:()=>{},expand:typeof old.expand==='function'?old.expand:()=>{},HapticFeedback:old.HapticFeedback||{impactOccurred(){},notificationOccurred(){}}};return true}
   async function waitForTelegramData(ms=7000){const until=Date.now()+ms;while(Date.now()<until){if(window.Telegram?.WebApp?.initData)return true;if(installTelegramFallback())return true;await sleep(100)}return Boolean(window.Telegram?.WebApp?.initData)}
 
-  const modules=['app.js','minigame.js','progression-v32.js','security-v33.js','admin-v34.js','store-v35.js','ux-v37.js','ux-v37-patch.js','mobile-fix-v371.js','stability-v372.js','arcade-v39.js','ui-v39.js','passive-income-v40.js','quest-state-v401.js','referral-v402.js','action-labels-v44.js','profile-cosmetics-v44.js','store-personalization-v45.js','title-preview-fix-v451.js','profile-polish-v453.js','stat-text-fix-v454.js','affiliate-v46.js','game-v50.js','v50-polish.js','season-market-fix-v502.js','cards-v51.js','cosmetic-access-v52.js','social-racing-v53.js','racing-stability-v564.js','performance-v54.js','safe-overlay-v561.js'];
+  const modules=['app.js','minigame.js','progression-v32.js','security-v33.js','admin-v34.js','store-v35.js','ux-v37.js','ux-v37-patch.js','mobile-fix-v371.js','stability-v372.js','arcade-v39.js','ui-v39.js','passive-income-v40.js','quest-state-v401.js','referral-v402.js','action-labels-v44.js','profile-cosmetics-v44.js','store-personalization-v45.js','title-preview-fix-v451.js','profile-polish-v453.js','stat-text-fix-v454.js','affiliate-v46.js','game-v50.js','v50-polish.js','season-market-fix-v502.js','cards-v51.js','cosmetic-access-v52.js','social-racing-v53.js','racing-stability-v564.js','performance-v54.js','safe-overlay-v561.js','local-party-v566.js'];
   async function downloadModules(){q(`Скачиваю модули 0/${modules.length}`);let done=0;const tasks=modules.map(async name=>{try{const r=await fetch(`${name}?v=${CACHE}`,{cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status}`);const code=await r.text();done+=1;q(`Скачиваю модули ${done}/${modules.length}`);return{name,code,ok:true}}catch(e){done+=1;remember(`${name}: ${e.message||e}`);q(`Скачиваю модули ${done}/${modules.length}`);return{name,code:'',ok:false}}});return Promise.all(tasks)}
   function executeCode(name,code){const s=document.createElement('script');s.textContent=`${code}\n//# sourceURL=${name}?v=${CACHE}`;document.head.appendChild(s);s.remove()}
 
