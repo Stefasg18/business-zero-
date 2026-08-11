@@ -2,9 +2,8 @@
   if(window.__BZ_RACING_DIRECTION_V532__)return;
   window.__BZ_RACING_DIRECTION_V532__=true;
 
-  const VERSION='5.5';
   const NEEDLE_SPEED=1.45;
-  window.BZ_APP_VERSION=VERSION;
+  const watchedNeedles=new WeakSet();
 
   const style=document.createElement('style');
   style.id='v532RaceDirectionStyle';
@@ -20,56 +19,47 @@
   `;
   document.head.appendChild(style);
 
-  function enforceVersion(){
-    const top=document.querySelector('.topbar .eyebrow');
-    if(top)top.textContent=`BUSINESS GAME · ${VERSION}`;
-    document.querySelectorAll('.v53-sheet header span').forEach(x=>x.textContent=`BUSINESS GAME · ${VERSION}`);
-    const social=document.querySelector('.v53-head>div>span');
-    if(social)social.textContent=`ДРУЗЬЯ · ${VERSION}`;
-    document.title=`Бизнес с нуля ${VERSION}`;
-  }
-
-  function fixCars(){
-    document.querySelectorAll('.v53-lane>div>i').forEach((car,index)=>{
+  function fixCars(root=document){
+    if(root?.matches?.('.v53-lane>div>i')&&root.textContent==='🏁')root.textContent='🚕';
+    root?.querySelectorAll?.('.v53-lane>div>i').forEach((car,index)=>{
       if(car.textContent==='🏁')car.textContent='🚕';
       car.setAttribute('aria-label',`Машина ${index+1}`);
     });
-    enforceVersion();
   }
 
-  function accelerateNeedle(needle){
-    if(!needle||needle.id!=='v53Needle')return;
-    const raw=String(needle.style.left||'');
-    if(!raw.endsWith('%')||needle.dataset.v533Adjusted===raw)return;
-    const left=Number.parseFloat(raw);
-    if(!Number.isFinite(left))return;
-    const adjusted=Math.max(0,Math.min(100,50+(left-50)*NEEDLE_SPEED));
-    const value=`${adjusted.toFixed(2)}%`;
-    needle.dataset.v533Adjusted=value;
-    if(raw!==value)needle.style.left=value;
+  function watchNeedle(needle){
+    if(!needle||needle.id!=='v53Needle'||watchedNeedles.has(needle))return;
+    watchedNeedles.add(needle);
+    let writing=false;
+    const adjust=()=>{
+      if(writing)return;
+      const raw=String(needle.style.left||'');
+      if(!raw.endsWith('%'))return;
+      const left=Number.parseFloat(raw);
+      if(!Number.isFinite(left))return;
+      const adjusted=Math.max(0,Math.min(100,50+(left-50)*NEEDLE_SPEED));
+      const value=`${adjusted.toFixed(2)}%`;
+      if(raw===value)return;
+      writing=true;
+      needle.style.left=value;
+      queueMicrotask(()=>{writing=false});
+    };
+    const observer=new MutationObserver(adjust);
+    observer.observe(needle,{attributes:true,attributeFilter:['style']});
+    adjust();
   }
 
-  const domObserver=new MutationObserver(records=>{
-    for(const record of records){
-      record.addedNodes.forEach(node=>{
-        if(node.nodeType!==1)return;
-        if(node.id==='v53Needle')accelerateNeedle(node);
-        node.querySelectorAll?.('.v53-lane>div>i').forEach((car,index)=>{
-          if(car.textContent==='🏁')car.textContent='🚕';
-          car.setAttribute('aria-label',`Машина ${index+1}`);
-        });
-      });
-    }
-    enforceVersion();
-  });
-  domObserver.observe(document.body,{subtree:true,childList:true});
+  function scan(root=document){
+    fixCars(root);
+    if(root?.id==='v53Needle')watchNeedle(root);
+    root?.querySelectorAll?.('#v53Needle').forEach(watchNeedle);
+  }
 
-  const needleObserver=new MutationObserver(records=>{
+  scan(document);
+  const observer=new MutationObserver(records=>{
     for(const record of records){
-      if(record.target?.id==='v53Needle')accelerateNeedle(record.target);
+      for(const node of record.addedNodes){if(node.nodeType===1)scan(node)}
     }
   });
-  needleObserver.observe(document.body,{subtree:true,attributes:true,attributeFilter:['style']});
-
-  fixCars();
+  observer.observe(document.body,{subtree:true,childList:true});
 })();
