@@ -2,7 +2,7 @@
   if(window.__BZ_COSMETIC_ACCESS_V52__)return;
   window.__BZ_COSMETIC_ACCESS_V52__=true;
 
-  const VERSION='5.3.1';
+  const VERSION='5.3.3';
   window.BZ_APP_VERSION=VERSION;
   const DEFAULTS=new Set(['title_novice','avatar_initial','name_glow_none','avatar_glow_none']);
 
