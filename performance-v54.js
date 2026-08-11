@@ -2,7 +2,7 @@
   if(window.__BZ_PERFORMANCE_V54__)return;
   window.__BZ_PERFORMANCE_V54__=true;
 
-  const VERSION='5.4';
+  const VERSION='5.5';
   window.BZ_APP_VERSION=VERSION;
 
   if(typeof api!=='function')return;
@@ -63,13 +63,9 @@
       const roomId=match[1];
       const key=`race:${roomId}`;
       const hit=cache.get(key);
-
-      // Telegram can keep timers alive while the Mini App is backgrounded.
-      // Reuse the last snapshot instead of sending invisible traffic.
       if(document.visibilityState==='hidden'&&hit)return hit.data;
       if(hit&&now-hit.at<hit.ttl)return hit.data;
       if(inFlight.has(key))return inFlight.get(key);
-
       const p=baseApi(path,options).then(data=>{
         cache.set(key,{at:Date.now(),ttl:raceTtl(data),data});
         return data;
