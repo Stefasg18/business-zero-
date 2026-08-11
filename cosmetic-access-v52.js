@@ -58,19 +58,25 @@
     if(credit&&credits>=999999){credit.textContent='👑 OWNER';credit.title='Владелец: смена имени без жетонов';}
   }
 
-  function ensureScript(src,flag,attr){
-    if(window[flag])return;
-    if(document.querySelector(`script[${attr}]`))return;
+  function ensureScript(src,flag,attr,done){
+    if(window[flag]){done?.();return;}
+    const existing=document.querySelector(`script[${attr}]`);
+    if(existing){if(done)existing.addEventListener('load',done,{once:true});return;}
     const script=document.createElement('script');
     script.setAttribute(attr,'1');
-    script.src=`${src}?v=550-${Date.now()}`;
+    script.src=`${src}?v=551-${Date.now()}`;
     script.async=false;
+    script.onload=()=>done?.();
     script.onerror=()=>console.error(`Не удалось загрузить ${src}`);
     document.body.appendChild(script);
   }
+  const ensureRenderRecovery=()=>ensureScript('ios-render-recovery-v551.js','__BZ_IOS_RENDER_RECOVERY_V551__','data-v551-render-recovery');
   const ensureRacePatch=()=>ensureScript('racing-direction-v532.js','__BZ_RACING_DIRECTION_V532__','data-v55-racing-patch');
   const ensurePerformancePatch=()=>ensureScript('performance-v54.js','__BZ_PERFORMANCE_V54__','data-v55-performance-patch');
   const ensurePartyArena=()=>ensureScript('party-arena-v55.js','__BZ_PARTY_ARENA_V55__','data-v55-party-arena');
+
+  // Start the iOS/WebView recovery before the later fixed-overlay modules load.
+  ensureRenderRecovery();
 
   const observer=new MutationObserver(records=>{
     enforceVersion();
@@ -89,6 +95,7 @@
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible'){
       enforceVersion();
+      ensureRenderRecovery();
       ensureRacePatch();
       ensurePerformancePatch();
       ensurePartyArena();
@@ -96,6 +103,7 @@
   });
   window.addEventListener('pageshow',()=>{
     enforceVersion();
+    ensureRenderRecovery();
     ensureRacePatch();
     ensurePerformancePatch();
     ensurePartyArena();
@@ -106,5 +114,6 @@
   setTimeout(enforceVersion,800);
   setTimeout(ensureRacePatch,1100);
   setTimeout(ensurePerformancePatch,1500);
+  setTimeout(ensureRenderRecovery,1650);
   setTimeout(ensurePartyArena,1900);
 })();
