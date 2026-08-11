@@ -2,7 +2,7 @@
   if(window.__BZ_COSMETIC_ACCESS_V52__)return;
   window.__BZ_COSMETIC_ACCESS_V52__=true;
 
-  const VERSION='5.4';
+  const VERSION='5.5';
   window.BZ_APP_VERSION=VERSION;
   const DEFAULTS=new Set(['title_novice','avatar_initial','name_glow_none','avatar_glow_none']);
 
@@ -63,13 +63,14 @@
     if(document.querySelector(`script[${attr}]`))return;
     const script=document.createElement('script');
     script.setAttribute(attr,'1');
-    script.src=`${src}?v=540-${Date.now()}`;
+    script.src=`${src}?v=550-${Date.now()}`;
     script.async=false;
     script.onerror=()=>console.error(`Не удалось загрузить ${src}`);
     document.body.appendChild(script);
   }
-  const ensureRacePatch=()=>ensureScript('racing-direction-v532.js','__BZ_RACING_DIRECTION_V532__','data-v54-racing-patch');
-  const ensurePerformancePatch=()=>ensureScript('performance-v54.js','__BZ_PERFORMANCE_V54__','data-v54-performance-patch');
+  const ensureRacePatch=()=>ensureScript('racing-direction-v532.js','__BZ_RACING_DIRECTION_V532__','data-v55-racing-patch');
+  const ensurePerformancePatch=()=>ensureScript('performance-v54.js','__BZ_PERFORMANCE_V54__','data-v55-performance-patch');
+  const ensurePartyArena=()=>ensureScript('party-arena-v55.js','__BZ_PARTY_ARENA_V55__','data-v55-party-arena');
 
   const observer=new MutationObserver(records=>{
     enforceVersion();
@@ -90,12 +91,14 @@
       enforceVersion();
       ensureRacePatch();
       ensurePerformancePatch();
+      ensurePartyArena();
     }
   });
   window.addEventListener('pageshow',()=>{
     enforceVersion();
     ensureRacePatch();
     ensurePerformancePatch();
+    ensurePartyArena();
   });
   setTimeout(()=>applyLocks(document),300);
   setTimeout(()=>applyLocks(document),1200);
@@ -103,4 +106,5 @@
   setTimeout(enforceVersion,800);
   setTimeout(ensureRacePatch,1100);
   setTimeout(ensurePerformancePatch,1500);
+  setTimeout(ensurePartyArena,1900);
 })();
