@@ -4,214 +4,50 @@
 
   const VERSION='5.6.5';
   const BUILD='565';
-  const CACHE='5652';
+  const CACHE='5655';
   const errors=[];
   window.BZ_APP_VERSION=VERSION;
   window.BZ_CONFIG={API_BASE:'https://business-zero-backend.onrender.com',BOT_USERNAME:'BusinessZeroGameBot'};
-  // Party Arena stays lazy/isolated and cannot block startup.
   window.__BZ_PARTY_ARENA_V55__=true;
 
   const status=()=>document.getElementById('bzBoot565');
   const statusText=()=>document.getElementById('bzBoot565Text');
   const remember=e=>{errors.push(String(e?.message||e||'unknown').slice(0,200));if(errors.length>10)errors.shift()};
-  const q=(text,kind='')=>{
-    const d=status(),t=statusText();
-    if(t)t.textContent=text;
-    if(d){d.classList.remove('ok','err');if(kind)d.classList.add(kind)}
-  };
-
+  const q=(text,kind='')=>{const d=status(),t=statusText();if(t)t.textContent=text;if(d){d.classList.remove('ok','err');if(kind)d.classList.add(kind)}};
   window.addEventListener('error',e=>remember(`${e.message||'JS error'} · ${String(e.filename||'').split('/').pop()}:${e.lineno||0}`));
   window.addEventListener('unhandledrejection',e=>remember(e.reason?.message||e.reason||'promise error'));
-
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   const timeout=(ms,label='тайм-аут')=>new Promise((_,rej)=>setTimeout(()=>rej(new Error(label)),ms));
   const frame=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 
-  function enforceVersion(){
-    window.BZ_APP_VERSION=VERSION;
-    const badge=document.querySelector('.topbar .eyebrow');
-    if(badge)badge.textContent=`BUSINESS GAME · ${VERSION}`;
-    document.title=`Бизнес с нуля ${VERSION}`;
-  }
+  function enforceVersion(){window.BZ_APP_VERSION=VERSION;const badge=document.querySelector('.topbar .eyebrow');if(badge)badge.textContent=`BUSINESS GAME · ${VERSION}`;document.title=`Бизнес с нуля ${VERSION}`}
+  function loadCss(href){return new Promise(resolve=>{const l=document.createElement('link');l.rel='stylesheet';l.href=href;l.onload=()=>resolve(true);l.onerror=()=>{remember(`CSS ${href}`);resolve(false)};document.head.appendChild(l);setTimeout(()=>resolve(false),5000)})}
+  function loadExternalScript(src,ms=5000){return Promise.race([new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.async=true;s.onload=()=>resolve(true);s.onerror=()=>reject(new Error(`не загрузился ${src}`));document.head.appendChild(s)}),timeout(ms,`тайм-аут ${src}`)])}
+  function installTelegramFallback(){if(window.Telegram?.WebApp?.initData)return true;const merged=new URLSearchParams(location.search);const hash=new URLSearchParams(String(location.hash||'').replace(/^#/,''));for(const [k,v] of hash.entries())if(!merged.has(k))merged.set(k,v);const initData=merged.get('tgWebAppData')||'';if(!initData)return false;let user={};try{const raw=new URLSearchParams(initData).get('user');if(raw)user=JSON.parse(raw)}catch{}const old=window.Telegram?.WebApp||{};window.Telegram=window.Telegram||{};window.Telegram.WebApp={...old,initData,initDataUnsafe:{...(old.initDataUnsafe||{}),user},platform:old.platform||merged.get('tgWebAppPlatform')||'ios',version:old.version||merged.get('tgWebAppVersion')||'8.0',ready:typeof old.ready==='function'?old.ready:()=>{},expand:typeof old.expand==='function'?old.expand:()=>{},HapticFeedback:old.HapticFeedback||{impactOccurred(){},notificationOccurred(){}}};return true}
+  async function waitForTelegramData(ms=7000){const until=Date.now()+ms;while(Date.now()<until){if(window.Telegram?.WebApp?.initData)return true;if(installTelegramFallback())return true;await sleep(100)}return Boolean(window.Telegram?.WebApp?.initData)}
 
-  function loadCss(href){
-    return new Promise(resolve=>{
-      const l=document.createElement('link');l.rel='stylesheet';l.href=href;
-      l.onload=()=>resolve(true);l.onerror=()=>{remember(`CSS ${href}`);resolve(false)};
-      document.head.appendChild(l);
-      setTimeout(()=>resolve(false),5000);
-    });
-  }
-
-  function loadExternalScript(src,ms=5000){
-    return Promise.race([
-      new Promise((resolve,reject)=>{
-        const s=document.createElement('script');s.src=src;s.async=true;
-        s.onload=()=>resolve(true);s.onerror=()=>reject(new Error(`не загрузился ${src}`));
-        document.head.appendChild(s);
-      }),
-      timeout(ms,`тайм-аут ${src}`)
-    ]);
-  }
-
-  function installTelegramFallback(){
-    if(window.Telegram?.WebApp?.initData)return true;
-    const merged=new URLSearchParams(location.search);
-    const hash=new URLSearchParams(String(location.hash||'').replace(/^#/,''));
-    for(const [k,v] of hash.entries())if(!merged.has(k))merged.set(k,v);
-    const initData=merged.get('tgWebAppData')||'';
-    if(!initData)return false;
-    let user={};
-    try{const raw=new URLSearchParams(initData).get('user');if(raw)user=JSON.parse(raw)}catch{}
-    const old=window.Telegram?.WebApp||{};
-    window.Telegram=window.Telegram||{};
-    window.Telegram.WebApp={
-      ...old,
-      initData,
-      initDataUnsafe:{...(old.initDataUnsafe||{}),user},
-      platform:old.platform||merged.get('tgWebAppPlatform')||'ios',
-      version:old.version||merged.get('tgWebAppVersion')||'8.0',
-      ready:typeof old.ready==='function'?old.ready:()=>{},
-      expand:typeof old.expand==='function'?old.expand:()=>{},
-      HapticFeedback:old.HapticFeedback||{impactOccurred(){},notificationOccurred(){}}
-    };
-    return true;
-  }
-
-  async function waitForTelegramData(ms=7000){
-    const until=Date.now()+ms;
-    while(Date.now()<until){
-      if(window.Telegram?.WebApp?.initData)return true;
-      if(installTelegramFallback())return true;
-      await sleep(100);
-    }
-    return Boolean(window.Telegram?.WebApp?.initData);
-  }
-
-  const modules=[
-    'app.js','minigame.js','progression-v32.js','security-v33.js','admin-v34.js','store-v35.js',
-    'ux-v37.js','ux-v37-patch.js','mobile-fix-v371.js','stability-v372.js','arcade-v39.js','ui-v39.js',
-    'passive-income-v40.js','quest-state-v401.js','referral-v402.js','action-labels-v44.js','profile-cosmetics-v44.js',
-    'store-personalization-v45.js','title-preview-fix-v451.js','profile-polish-v453.js','stat-text-fix-v454.js','affiliate-v46.js',
-    'game-v50.js','v50-polish.js','season-market-fix-v502.js','cards-v51.js','cosmetic-access-v52.js',
-    'social-racing-v53.js','racing-stability-v564.js','performance-v54.js','safe-overlay-v561.js'
-  ];
-
-  async function downloadModules(){
-    q(`Скачиваю модули 0/${modules.length}`);
-    let done=0;
-    const tasks=modules.map(async name=>{
-      try{
-        const r=await fetch(`${name}?v=${CACHE}`,{cache:'no-store'});
-        if(!r.ok)throw new Error(`HTTP ${r.status}`);
-        const code=await r.text();
-        done+=1;q(`Скачиваю модули ${done}/${modules.length}`);
-        return {name,code,ok:true};
-      }catch(e){
-        done+=1;remember(`${name}: ${e.message||e}`);q(`Скачиваю модули ${done}/${modules.length}`);
-        return {name,code:'',ok:false};
-      }
-    });
-    return Promise.all(tasks);
-  }
-
-  function executeCode(name,code){
-    const s=document.createElement('script');
-    s.textContent=`${code}\n//# sourceURL=${name}?v=${CACHE}`;
-    document.head.appendChild(s);
-    s.remove();
-  }
+  const modules=['app.js','minigame.js','progression-v32.js','security-v33.js','admin-v34.js','store-v35.js','ux-v37.js','ux-v37-patch.js','mobile-fix-v371.js','stability-v372.js','arcade-v39.js','ui-v39.js','passive-income-v40.js','quest-state-v401.js','referral-v402.js','action-labels-v44.js','profile-cosmetics-v44.js','store-personalization-v45.js','title-preview-fix-v451.js','profile-polish-v453.js','stat-text-fix-v454.js','affiliate-v46.js','game-v50.js','v50-polish.js','season-market-fix-v502.js','cards-v51.js','cosmetic-access-v52.js','social-racing-v53.js','racing-stability-v564.js','performance-v54.js','safe-overlay-v561.js'];
+  async function downloadModules(){q(`Скачиваю модули 0/${modules.length}`);let done=0;const tasks=modules.map(async name=>{try{const r=await fetch(`${name}?v=${CACHE}`,{cache:'no-store'});if(!r.ok)throw new Error(`HTTP ${r.status}`);const code=await r.text();done+=1;q(`Скачиваю модули ${done}/${modules.length}`);return{name,code,ok:true}}catch(e){done+=1;remember(`${name}: ${e.message||e}`);q(`Скачиваю модули ${done}/${modules.length}`);return{name,code:'',ok:false}}});return Promise.all(tasks)}
+  function executeCode(name,code){const s=document.createElement('script');s.textContent=`${code}\n//# sourceURL=${name}?v=${CACHE}`;document.head.appendChild(s);s.remove()}
 
   async function boot(){
     try{
       q('Получаю свежий интерфейс…');
-      const shellReq=fetch(`./?shell=${BUILD}-${Date.now()}`,{cache:'no-store'});
-      const moduleReq=downloadModules();
-      const shellRes=await Promise.race([shellReq,timeout(7000,'не удалось получить интерфейс')]);
-      if(!shellRes?.ok)throw new Error(`страница HTTP ${shellRes?.status||0}`);
-      const source=await shellRes.text();
-      const parsed=new DOMParser().parseFromString(source,'text/html');
-      if(!parsed.querySelector('.app')||!parsed.getElementById('tab-home'))throw new Error('не найден интерфейс игры');
-
-      document.body.innerHTML=parsed.body.innerHTML;
-      const diag=document.createElement('div');
-      diag.id='bzBoot565';
-      diag.innerHTML='<strong>Загрузка 5.6.5</strong><span id="bzBoot565Text">Интерфейс готов…</span>';
-      document.body.appendChild(diag);
-      enforceVersion();
-      await Promise.all([loadCss(`styles.css?v=${CACHE}`),loadCss(`minigame.css?v=${CACHE}`)]);
-      await frame();
-
-      q('Подключаю Telegram…');
-      try{await loadExternalScript('https://telegram.org/js/telegram-web-app.js?63',5000)}catch(e){remember(e)}
-      const hasTelegramData=await waitForTelegramData(7000);
-      if(!hasTelegramData)remember('Telegram initData не получен');
-      enforceVersion();
-
-      const downloaded=await Promise.race([moduleReq,timeout(10000,'модули скачиваются слишком долго')]);
-      const byName=new Map(downloaded.map(x=>[x.name,x]));
-
-      const nativeAdd=window.addEventListener.bind(window);
-      window.addEventListener=function(type,listener,options){
-        const out=nativeAdd(type,listener,options);
-        if(type==='load'&&document.readyState==='complete')setTimeout(()=>{
-          try{typeof listener==='function'?listener.call(window,new Event('load')):listener?.handleEvent?.(new Event('load'))}catch(e){remember(e)}
-        },0);
-        return out;
-      };
-
-      q('Запускаю ядро…');
-      const core=byName.get('app.js');
-      if(!core?.ok)throw new Error('не загрузился app.js');
-      executeCode('app.js',core.code);
-      enforceVersion();
-
-      // Guard starts immediately after core so legacy modules cannot leave stale version/mode behind.
-      try{
-        const guardRes=await fetch(`runtime-guard-v565.js?v=${CACHE}`,{cache:'no-store'});
-        if(guardRes.ok)executeCode('runtime-guard-v565.js',await guardRes.text());
-      }catch(e){remember(e)}
-
-      let n=1;
-      for(const name of modules){
-        if(name==='app.js')continue;
-        const item=byName.get(name);
-        n+=1;q(`Запускаю модули ${n}/${modules.length}`);
-        if(item?.ok){
-          try{executeCode(name,item.code)}catch(e){remember(`${name}: ${e.message||e}`)}
-        }
-        enforceVersion();
-      }
-      window.addEventListener=nativeAdd;
-      enforceVersion();
-
-      const mode=document.getElementById('modeBadge');
-      const modeText=String(mode?.textContent||'').trim();
-      if(window.Telegram?.WebApp?.initData){
-        // Do not turn an API/network failure into a visually green ONLINE state.
-        if(mode&&['ЗАГРУЗКА','DEMO','TG ERROR'].includes(modeText)){
-          mode.textContent='ONLINE';
-          mode.classList.add('online');
-        }else if(modeText==='ONLINE'){
-          mode?.classList.add('online');
-        }else{
-          mode?.classList.remove('online');
-        }
-      }else if(mode&&modeText==='ЗАГРУЗКА'){
-        mode.textContent='TG ERROR';mode.classList.remove('online');
-      }
-
-      const d=status();
-      if(errors.length){
-        q(`Готово. Диагностика: ${errors.length}`,'err');
-        if(d)d.title=errors.join('\n');
-        setTimeout(()=>d?.classList.add('ok'),2600);
-      }else q('Готово','ok');
-    }catch(e){
-      remember(e);
-      q(`Ошибка запуска: ${String(e?.message||e)}`,'err');
-    }
+      const shellReq=fetch(`./?shell=${BUILD}-${Date.now()}`,{cache:'no-store'}),moduleReq=downloadModules();
+      const shellRes=await Promise.race([shellReq,timeout(7000,'не удалось получить интерфейс')]);if(!shellRes?.ok)throw new Error(`страница HTTP ${shellRes?.status||0}`);
+      const source=await shellRes.text(),parsed=new DOMParser().parseFromString(source,'text/html');if(!parsed.querySelector('.app')||!parsed.getElementById('tab-home'))throw new Error('не найден интерфейс игры');
+      document.body.innerHTML=parsed.body.innerHTML;const diag=document.createElement('div');diag.id='bzBoot565';diag.innerHTML='<strong>Загрузка 5.6.5</strong><span id="bzBoot565Text">Интерфейс готов…</span>';document.body.appendChild(diag);enforceVersion();
+      await Promise.all([loadCss(`styles.css?v=${CACHE}`),loadCss(`minigame.css?v=${CACHE}`)]);await frame();
+      q('Подключаю Telegram…');try{await loadExternalScript('https://telegram.org/js/telegram-web-app.js?63',5000)}catch(e){remember(e)}const hasTelegramData=await waitForTelegramData(7000);if(!hasTelegramData)remember('Telegram initData не получен');enforceVersion();
+      const downloaded=await Promise.race([moduleReq,timeout(10000,'модули скачиваются слишком долго')]),byName=new Map(downloaded.map(x=>[x.name,x]));
+      const nativeAdd=window.addEventListener.bind(window);window.addEventListener=function(type,listener,options){const out=nativeAdd(type,listener,options);if(type==='load'&&document.readyState==='complete')setTimeout(()=>{try{typeof listener==='function'?listener.call(window,new Event('load')):listener?.handleEvent?.(new Event('load'))}catch(e){remember(e)}},0);return out};
+      q('Запускаю ядро…');const core=byName.get('app.js');if(!core?.ok)throw new Error('не загрузился app.js');executeCode('app.js',core.code);enforceVersion();
+      try{const guardRes=await fetch(`runtime-guard-v565.js?v=${CACHE}`,{cache:'no-store'});if(guardRes.ok)executeCode('runtime-guard-v565.js',await guardRes.text())}catch(e){remember(e)}
+      let n=1;for(const name of modules){if(name==='app.js')continue;const item=byName.get(name);n+=1;q(`Запускаю модули ${n}/${modules.length}`);if(item?.ok){try{executeCode(name,item.code)}catch(e){remember(`${name}: ${e.message||e}`)}}enforceVersion()}
+      window.addEventListener=nativeAdd;enforceVersion();
+      const mode=document.getElementById('modeBadge'),modeText=String(mode?.textContent||'').trim();if(window.Telegram?.WebApp?.initData){if(mode&&['ЗАГРУЗКА','DEMO','TG ERROR'].includes(modeText)){mode.textContent='ONLINE';mode.classList.add('online')}else if(modeText==='ONLINE'){mode?.classList.add('online')}else{mode?.classList.remove('online')}}else if(mode&&modeText==='ЗАГРУЗКА'){mode.textContent='TG ERROR';mode.classList.remove('online')}
+      const d=status();if(errors.length){q(`Готово. Диагностика: ${errors.length}`,'err');if(d)d.title=errors.join('\n');setTimeout(()=>d?.classList.add('ok'),2600)}else q('Готово','ok');
+    }catch(e){remember(e);q(`Ошибка запуска: ${String(e?.message||e)}`,'err')}
   }
-
   boot();
 })();
