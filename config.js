@@ -6,7 +6,7 @@ window.BZ_CONFIG = {
 window.addEventListener("load", () => {
   const load = (src, done) => {
     const script = document.createElement("script");
-    script.src = `${src}?v=453-${Date.now()}`;
+    script.src = `${src}?v=454-${Date.now()}`;
     script.async = false;
     script.onload = () => done?.();
     script.onerror = () => console.error(`Не удалось загрузить ${src}`);
@@ -30,7 +30,9 @@ window.addEventListener("load", () => {
                               load("profile-cosmetics-v44.js", () => {
                                 load("store-personalization-v45.js", () => {
                                   load("title-preview-fix-v451.js", () => {
-                                    load("profile-polish-v453.js");
+                                    load("profile-polish-v453.js", () => {
+                                      load("stat-text-fix-v454.js");
+                                    });
                                   });
                                 });
                               });
