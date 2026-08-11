@@ -61,10 +61,19 @@
     });
   }
 
+  function enhanceVersion(){
+    document.title=`Бизнес с нуля ${VERSION}`;
+    const version=document.querySelector('.topbar .eyebrow');
+    if(version)version.textContent=`BUSINESS GAME · ${VERSION}`;
+    document.querySelectorAll('.v50-sheet-head span').forEach(x=>x.textContent=`BUSINESS GAME · ${VERSION}`);
+    document.querySelectorAll('.v50-launch-top > div > span').forEach(x=>x.textContent=`BUSINESS GAME ${VERSION}`);
+  }
+
   function apply(root=document){
     enhanceMarket(root);
     enhanceSeason(root);
     enhanceMissions(root);
+    enhanceVersion();
   }
 
   const style=document.createElement('style');
@@ -96,8 +105,4 @@
   });
   observer.observe(document.body,{subtree:true,childList:true});
   apply();
-
-  document.title=`Бизнес с нуля ${VERSION}`;
-  const version=document.querySelector('.topbar .eyebrow');
-  if(version)version.textContent=`BUSINESS GAME · ${VERSION}`;
 })();
