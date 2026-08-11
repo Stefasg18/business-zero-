@@ -7,7 +7,18 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Бизнес с нуля 5.6</title>
+  <script>
+    (()=>{
+      const params=new URLSearchParams(location.search);
+      if(params.has('shell'))return;
+      params.set('build','5654');
+      const target=new URL('v565.html',location.href);
+      target.search=params.toString();
+      target.hash=location.hash;
+      location.replace(target.href);
+    })();
+  </script>
+  <title>Бизнес с нуля 5.6.5</title>
   <script src="https://telegram.org/js/telegram-web-app.js?63"></script>
   <link rel="stylesheet" href="styles.css?v=560" />
   <link rel="stylesheet" href="minigame.css?v=560" />
@@ -51,7 +62,7 @@
   <div class="app">
     <header class="topbar">
       <div>
-        <div class="eyebrow">BUSINESS GAME · 5.6</div>
+        <div class="eyebrow">BUSINESS GAME · 5.6.5</div>
         <h1>Бизнес с нуля</h1>
       </div>
       <div class="top-actions">
