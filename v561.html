@@ -23,6 +23,7 @@
       html=html.replaceAll('?v=560','?v=561');
       html=html.replace(/Бизнес с нуля 5\.6/g,'Бизнес с нуля 5.6.1');
       html=html.replace(/BUSINESS GAME · 5\.6/g,'BUSINESS GAME · 5.6.1');
+      html=html.replace('</head>','  <script defer src="safe-overlay-v561.js?v=561"></script>\n</head>');
       document.open();
       document.write(html);
       document.close();
