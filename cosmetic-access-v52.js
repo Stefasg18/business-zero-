@@ -6,8 +6,6 @@
   window.BZ_APP_VERSION=VERSION;
   const DEFAULTS=new Set(['title_novice','avatar_initial','name_glow_none','avatar_glow_none']);
 
-  // Modules are loaded dynamically after window.load. Older modules may still
-  // register a load handler, so run those late handlers immediately as well.
   if(!window.__BZ_LATE_LOAD_COMPAT_V531__){
     window.__BZ_LATE_LOAD_COMPAT_V531__=true;
     const originalAdd=window.addEventListener.bind(window);
@@ -60,6 +58,17 @@
     if(credit&&credits>=999999){credit.textContent='👑 OWNER';credit.title='Владелец: смена имени без жетонов';}
   }
 
+  function ensureRacePatch(){
+    if(window.__BZ_RACING_DIRECTION_V532__)return;
+    if(document.querySelector('script[data-v533-racing-patch]'))return;
+    const script=document.createElement('script');
+    script.dataset.v533RacingPatch='1';
+    script.src=`racing-direction-v532.js?v=533-${Date.now()}`;
+    script.async=false;
+    script.onerror=()=>console.error('Не удалось загрузить racing-direction-v532.js');
+    document.body.appendChild(script);
+  }
+
   const observer=new MutationObserver(records=>{
     enforceVersion();
     for(const r of records){
@@ -74,10 +83,11 @@
   observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true});
 
   document.addEventListener('click',()=>queueMicrotask(()=>{applyLocks(document);enforceVersion();}),true);
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')enforceVersion();});
-  window.addEventListener('pageshow',enforceVersion);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){enforceVersion();ensureRacePatch();}});
+  window.addEventListener('pageshow',()=>{enforceVersion();ensureRacePatch();});
   setTimeout(()=>applyLocks(document),300);
   setTimeout(()=>applyLocks(document),1200);
   setTimeout(enforceVersion,0);
   setTimeout(enforceVersion,800);
+  setTimeout(ensureRacePatch,1200);
 })();
