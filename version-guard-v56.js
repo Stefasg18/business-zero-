@@ -1,7 +1,7 @@
 (()=>{
-  if(window.__BZ_VERSION_GUARD_V561__)return;
-  window.__BZ_VERSION_GUARD_V561__=true;
-  const VERSION='5.6.1';
+  if(window.__BZ_VERSION_GUARD_V562__)return;
+  window.__BZ_VERSION_GUARD_V562__=true;
+  const VERSION='5.6.2';
   window.BZ_APP_VERSION=VERSION;
 
   function enforce(){
@@ -15,7 +15,7 @@
     const mode=document.getElementById('modeBadge');
     if(!mode)return;
     if(tg?.initData){
-      if(mode.textContent==='DEMO'||mode.textContent==='TG ERROR'){
+      if(['DEMO','TG ERROR','ЗАГРУЗКА'].includes(mode.textContent)){
         mode.textContent='ONLINE';
         mode.classList.add('online');
       }
@@ -30,8 +30,7 @@
   }
 
   enforce();
-  setTimeout(enforce,500);
-  setTimeout(enforce,1500);
+  [0,400,1200,3000].forEach(ms=>setTimeout(enforce,ms));
   window.addEventListener('load',()=>{enforce();setTimeout(diagnoseTelegram,250)},{once:true});
   window.addEventListener('pageshow',()=>{enforce();setTimeout(diagnoseTelegram,100)});
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){enforce();setTimeout(diagnoseTelegram,100)}});
