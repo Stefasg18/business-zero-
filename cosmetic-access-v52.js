@@ -2,7 +2,7 @@
   if(window.__BZ_COSMETIC_ACCESS_V52__)return;
   window.__BZ_COSMETIC_ACCESS_V52__=true;
 
-  const VERSION='5.3.3';
+  const VERSION='5.4';
   window.BZ_APP_VERSION=VERSION;
   const DEFAULTS=new Set(['title_novice','avatar_initial','name_glow_none','avatar_glow_none']);
 
@@ -58,16 +58,18 @@
     if(credit&&credits>=999999){credit.textContent='👑 OWNER';credit.title='Владелец: смена имени без жетонов';}
   }
 
-  function ensureRacePatch(){
-    if(window.__BZ_RACING_DIRECTION_V532__)return;
-    if(document.querySelector('script[data-v533-racing-patch]'))return;
+  function ensureScript(src,flag,attr){
+    if(window[flag])return;
+    if(document.querySelector(`script[${attr}]`))return;
     const script=document.createElement('script');
-    script.dataset.v533RacingPatch='1';
-    script.src=`racing-direction-v532.js?v=533-${Date.now()}`;
+    script.setAttribute(attr,'1');
+    script.src=`${src}?v=540-${Date.now()}`;
     script.async=false;
-    script.onerror=()=>console.error('Не удалось загрузить racing-direction-v532.js');
+    script.onerror=()=>console.error(`Не удалось загрузить ${src}`);
     document.body.appendChild(script);
   }
+  const ensureRacePatch=()=>ensureScript('racing-direction-v532.js','__BZ_RACING_DIRECTION_V532__','data-v54-racing-patch');
+  const ensurePerformancePatch=()=>ensureScript('performance-v54.js','__BZ_PERFORMANCE_V54__','data-v54-performance-patch');
 
   const observer=new MutationObserver(records=>{
     enforceVersion();
@@ -83,11 +85,22 @@
   observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true});
 
   document.addEventListener('click',()=>queueMicrotask(()=>{applyLocks(document);enforceVersion();}),true);
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){enforceVersion();ensureRacePatch();}});
-  window.addEventListener('pageshow',()=>{enforceVersion();ensureRacePatch();});
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible'){
+      enforceVersion();
+      ensureRacePatch();
+      ensurePerformancePatch();
+    }
+  });
+  window.addEventListener('pageshow',()=>{
+    enforceVersion();
+    ensureRacePatch();
+    ensurePerformancePatch();
+  });
   setTimeout(()=>applyLocks(document),300);
   setTimeout(()=>applyLocks(document),1200);
   setTimeout(enforceVersion,0);
   setTimeout(enforceVersion,800);
-  setTimeout(ensureRacePatch,1200);
+  setTimeout(ensureRacePatch,1100);
+  setTimeout(ensurePerformancePatch,1500);
 })();
