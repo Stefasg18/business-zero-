@@ -4,7 +4,7 @@
 
   const VERSION='5.6.5';
   const BUILD='565';
-  const CACHE='5651';
+  const CACHE='5652';
   const errors=[];
   window.BZ_APP_VERSION=VERSION;
   window.BZ_CONFIG={API_BASE:'https://business-zero-backend.onrender.com',BOT_USERNAME:'BusinessZeroGameBot'};
@@ -186,11 +186,18 @@
       enforceVersion();
 
       const mode=document.getElementById('modeBadge');
+      const modeText=String(mode?.textContent||'').trim();
       if(window.Telegram?.WebApp?.initData){
-        // bootOnline runs from app.js; keep visible state truthful while its network calls finish.
-        if(mode&&mode.textContent==='ЗАГРУЗКА')mode.textContent='ONLINE';
-        mode?.classList.add('online');
-      }else if(mode&&mode.textContent==='ЗАГРУЗКА'){
+        // Do not turn an API/network failure into a visually green ONLINE state.
+        if(mode&&['ЗАГРУЗКА','DEMO','TG ERROR'].includes(modeText)){
+          mode.textContent='ONLINE';
+          mode.classList.add('online');
+        }else if(modeText==='ONLINE'){
+          mode?.classList.add('online');
+        }else{
+          mode?.classList.remove('online');
+        }
+      }else if(mode&&modeText==='ЗАГРУЗКА'){
         mode.textContent='TG ERROR';mode.classList.remove('online');
       }
 
