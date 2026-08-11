@@ -39,11 +39,7 @@ window.addEventListener("load", () => {
                                               load("season-market-fix-v502.js", () => {
                                                 load("cards-v51.js", () => {
                                                   load("cosmetic-access-v52.js", () => {
-                                                    load("late-load-shim-v531.js", () => {
-                                                      load("social-racing-v53.js", () => {
-                                                        load("version-guard-v531.js");
-                                                      });
-                                                    });
+                                                    load("social-racing-v53.js");
                                                   });
                                                 });
                                               });
