@@ -2,12 +2,12 @@ window.BZ_CONFIG = {
   API_BASE: "https://business-zero-backend.onrender.com",
   BOT_USERNAME: "BusinessZeroGameBot"
 };
-window.BZ_APP_VERSION = "5.3.3";
+window.BZ_APP_VERSION = "5.4";
 
 window.addEventListener("load", () => {
   const load = (src, done) => {
     const script = document.createElement("script");
-    script.src = `${src}?v=533-${Date.now()}`;
+    script.src = `${src}?v=540-${Date.now()}`;
     script.async = false;
     script.onload = () => done?.();
     script.onerror = () => console.error(`Не удалось загрузить ${src}`);
@@ -40,7 +40,9 @@ window.addEventListener("load", () => {
                                                 load("cards-v51.js", () => {
                                                   load("cosmetic-access-v52.js", () => {
                                                     load("social-racing-v53.js", () => {
-                                                      load("racing-direction-v532.js");
+                                                      load("racing-direction-v532.js", () => {
+                                                        load("performance-v54.js");
+                                                      });
                                                     });
                                                   });
                                                 });
