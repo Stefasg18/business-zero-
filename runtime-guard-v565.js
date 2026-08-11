@@ -14,25 +14,35 @@
     const mode=document.getElementById('modeBadge');
     if(!mode)return;
     const tg=window.Telegram?.WebApp;
+    const text=String(mode.textContent||'').trim();
     if(tg?.initData){
-      if(mode.textContent!=='ONLINE')mode.textContent='ONLINE';
-      mode.classList.add('online');
+      if(['ЗАГРУЗКА','DEMO','TG ERROR'].includes(text)){
+        mode.textContent='ONLINE';
+        mode.classList.add('online');
+      }
       return;
     }
     if(document.readyState==='complete' && String(tg?.platform||'unknown')!=='unknown'){
-      if(mode.textContent==='ЗАГРУЗКА')mode.textContent='TG ERROR';
+      if(text==='ЗАГРУЗКА')mode.textContent='TG ERROR';
       mode.classList.remove('online');
     }
   }
 
   function enforce(){enforceVersion();enforceMode()}
   enforce();
+
+  // Fast stabilization during startup, then a very light long-lived guard so legacy
+  // modules cannot restore obsolete version labels after later UI renders.
   let ticks=0;
-  const timer=setInterval(()=>{
+  const fast=setInterval(()=>{
     enforce();
     ticks+=1;
-    if(ticks>=40)clearInterval(timer);
+    if(ticks>=40){
+      clearInterval(fast);
+      setInterval(enforce,5000);
+    }
   },500);
+
   window.addEventListener('pageshow',enforce);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')enforce()});
 })();
