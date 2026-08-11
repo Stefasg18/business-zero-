@@ -4,10 +4,10 @@
 
   const VERSION='5.6.4';
   const BUILD='564';
+  const CACHE='5642';
   const errors=[];
   window.BZ_APP_VERSION=VERSION;
   window.BZ_CONFIG={API_BASE:'https://business-zero-backend.onrender.com',BOT_USERNAME:'BusinessZeroGameBot'};
-  // Party Arena remains isolated from startup until its own loader is made fully lazy.
   window.__BZ_PARTY_ARENA_V55__=true;
 
   const status=()=>document.getElementById('bzBoot564');
@@ -38,7 +38,7 @@
       setTimeout(()=>resolve(false),5000);
     });
   }
-  function loadScript(src,ms=6500){
+  function loadSingleScript(src,ms=5000){
     return Promise.race([
       new Promise((resolve,reject)=>{
         const s=document.createElement('script');s.src=src;s.async=false;
@@ -47,9 +47,6 @@
       }),
       timeout(ms,`тайм-аут ${src}`)
     ]);
-  }
-  function preloadScript(src){
-    const l=document.createElement('link');l.rel='preload';l.as='script';l.href=src;document.head.appendChild(l);
   }
   function installTelegramFallback(){
     if(window.Telegram?.WebApp?.initData)return false;
@@ -84,6 +81,27 @@
     'social-racing-v53.js','racing-stability-v564.js','performance-v54.js','safe-overlay-v561.js','version-guard-v56.js'
   ];
 
+  function loadModulesParallel(){
+    let settled=0;
+    return new Promise(resolve=>{
+      const done=()=>{
+        settled+=1;
+        q(`Модули ${settled}/${modules.length}`);
+        enforceVersion();
+        if(settled>=modules.length)resolve(true);
+      };
+      for(const name of modules){
+        const s=document.createElement('script');
+        s.src=`${name}?v=${CACHE}`;
+        s.async=false;
+        s.onload=done;
+        s.onerror=()=>{remember(`не загрузился ${name}`);done()};
+        document.head.appendChild(s);
+      }
+      setTimeout(()=>resolve(false),14000);
+    });
+  }
+
   async function boot(){
     try{
       q('Получаю свежий интерфейс…');
@@ -99,13 +117,11 @@
       diag.innerHTML='<strong>Загрузка 5.6.4</strong><span id="bzBoot564Text">Интерфейс готов…</span>';
       document.body.appendChild(diag);
       enforceVersion();
-      await Promise.all([loadCss(`styles.css?v=${BUILD}`),loadCss(`minigame.css?v=${BUILD}`)]);
+      await Promise.all([loadCss(`styles.css?v=${CACHE}`),loadCss(`minigame.css?v=${CACHE}`)]);
       await frame();
 
-      modules.forEach(name=>preloadScript(`${name}?v=${BUILD}`));
-
       q('Подключаю Telegram…');
-      try{await loadScript('https://telegram.org/js/telegram-web-app.js?63',5000)}catch(e){remember(e)}
+      try{await loadSingleScript('https://telegram.org/js/telegram-web-app.js?63',4500)}catch(e){remember(e)}
       if(!window.Telegram?.WebApp?.initData)installTelegramFallback();
       enforceVersion();
       await frame();
@@ -119,21 +135,17 @@
         return out;
       };
 
-      for(let i=0;i<modules.length;i++){
-        const name=modules[i];
-        q(`Модуль ${i+1}/${modules.length}: ${name}`);
-        await frame();
-        try{await loadScript(`${name}?v=${BUILD}`,6500)}catch(e){remember(e)}
-        enforceVersion();
-      }
+      q(`Модули 0/${modules.length}`);
+      const allFinished=await loadModulesParallel();
       window.addEventListener=nativeAdd;
       enforceVersion();
 
       const d=status();
+      if(!allFinished)remember('часть модулей продолжает загрузку в фоне');
       if(errors.length){
         q(`Готово. Пропущено ошибок: ${errors.length}`,'err');
         if(d)d.title=errors.join('\n');
-        setTimeout(()=>d?.classList.add('ok'),2600);
+        setTimeout(()=>d?.classList.add('ok'),2200);
       }else{
         q('Готово','ok');
       }
