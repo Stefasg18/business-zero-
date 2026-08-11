@@ -7,7 +7,7 @@ window.BZ_APP_VERSION = "5.5";
 window.addEventListener("load", () => {
   const load = (src, done) => {
     const script = document.createElement("script");
-    script.src = `${src}?v=550-${Date.now()}`;
+    script.src = `${src}?v=551-${Date.now()}`;
     script.async = false;
     script.onload = () => done?.();
     script.onerror = () => console.error(`Не удалось загрузить ${src}`);
@@ -42,7 +42,9 @@ window.addEventListener("load", () => {
                                                     load("social-racing-v53.js", () => {
                                                       load("racing-direction-v532.js", () => {
                                                         load("performance-v54.js", () => {
-                                                          load("party-arena-v55.js");
+                                                          load("ios-render-recovery-v551.js", () => {
+                                                            load("party-arena-v55.js");
+                                                          });
                                                         });
                                                       });
                                                     });
