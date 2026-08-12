@@ -5,6 +5,12 @@
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.defer=true;s.onload=()=>resolve(true);s.onerror=()=>reject(new Error(`Не загрузился ${src}`));document.head.appendChild(s)});}
   function execute(name,code){const s=document.createElement('script');s.textContent=`${code}\n//# sourceURL=${name}?v=${CACHE}`;document.head.appendChild(s);s.remove();}
+  function installCanvasRoundRect(){
+    try{
+      const p=window.CanvasRenderingContext2D?.prototype;if(!p||p.roundRect)return;
+      p.roundRect=function(x,y,w,h,r=0){const rr=Math.max(0,Math.min(Number(Array.isArray(r)?r[0]:r)||0,Math.abs(w)/2,Math.abs(h)/2));this.moveTo(x+rr,y);this.arcTo(x+w,y,x+w,y+h,rr);this.arcTo(x+w,y+h,x,y+h,rr);this.arcTo(x,y+h,x,y,rr);this.arcTo(x,y,x+w,y,rr);this.closePath();return this;};
+    }catch{}
+  }
   async function boot(){
     try{
       await loadScript('boot-v565.js?v=5661');
@@ -13,8 +19,12 @@
         if(document.getElementById('tab-profile')&&typeof window.BZ_APP_VERSION!=='undefined'&&typeof window.Telegram!=='undefined')break;
         await sleep(120);
       }
+      installCanvasRoundRect();
       const r=await fetch(`growth-v571.js?v=${CACHE}`,{cache:'no-store'});
-      if(r.ok)execute('growth-v571.js',await r.text());
+      if(r.ok){
+        execute('growth-v571.js',await r.text());
+        setTimeout(()=>{const badge=document.querySelector('.growth571-hot');if(badge)badge.textContent='🔥 Делись прогрессом';},450);
+      }
     }catch(e){console.error('Growth boot error',e);}
   }
   boot();
