@@ -4,7 +4,7 @@
 
   const CASH_REWARD=5000;
   const STAR_COMMISSION=5;
-  const COMMISSION_MONTHS=6;
+  const COMMISSION_MONTHS=1;
   const safe=s=>typeof escapeHtml==='function'?escapeHtml(s):String(s??'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 
   function getGameReferralLink(){
@@ -40,7 +40,7 @@
           <div class="bz-aff-sheet-icon">⭐</div>
           <div class="bz-aff-kicker">TELEGRAM STARS</div>
           <h3>Как получать ${STAR_COMMISSION}%</h3>
-          <p>Это официальная партнёрская программа Telegram. После её запуска каждый игрок сможет получить собственную партнёрскую ссылку, а Telegram будет автоматически перечислять ему ${STAR_COMMISSION}% от покупок привлечённых пользователей в течение ${COMMISSION_MONTHS} месяцев.</p>
+          <p>Это официальная партнёрская программа Telegram. После её запуска каждый игрок сможет получить собственную партнёрскую ссылку, а Telegram будет автоматически перечислять ему ${STAR_COMMISSION}% от покупок привлечённых пользователей в течение ${COMMISSION_MONTHS} месяца.</p>
           <div class="bz-aff-steps">
             <div><b>1</b><span>Открой Telegram → <strong>Настройки</strong> → <strong>Мои звёзды</strong>.</span></div>
             <div><b>2</b><span>Открой <strong>Заработать звёзды</strong> и найди «Бизнес с нуля».</span></div>
@@ -82,7 +82,7 @@
         </div>
         <div class="bz-aff-how">
           <div class="bz-aff-how-icon">💡</div>
-          <div><strong>Как это работает</strong><p>Приглашаешь игрока → он становится активным → получаешь ${CASH_REWARD.toLocaleString('ru-RU')} игровых ₽. Если он пришёл по официальной партнёрской ссылке Telegram и покупает что-то за Stars, Telegram начисляет тебе ${STAR_COMMISSION}% ⭐.</p></div>
+          <div><strong>Как это работает</strong><p>Приглашаешь игрока → он становится активным → получаешь ${CASH_REWARD.toLocaleString('ru-RU')} игровых ₽. Если он пришёл по официальной партнёрской ссылке Telegram и покупает что-то за Stars, Telegram начисляет тебе ${STAR_COMMISSION}% ⭐ в течение 1 месяца.</p></div>
         </div>
         <div class="bz-aff-actions">
           <button id="bzShareGameRefV46" class="bz-aff-primary">📨 Поделиться игровой ссылкой</button>
