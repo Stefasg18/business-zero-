@@ -1,7 +1,7 @@
 (()=>{
   if(window.__BZ_BOOT_V5662__)return;
   window.__BZ_BOOT_V5662__=true;
-  const CACHE='5665';
+  const CACHE='5666';
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.defer=true;s.onload=()=>resolve(true);s.onerror=()=>reject(new Error(`Не загрузился ${src}`));document.head.appendChild(s)});}
   function execute(name,code){const s=document.createElement('script');s.textContent=`${code}\n//# sourceURL=${name}?v=${CACHE}`;document.head.appendChild(s);s.remove();}
@@ -29,6 +29,8 @@
       if(ui.ok)execute('unified-ui-v572.js',await ui.text());
       const fix=await fetch(`unified-ui-fix-v573.js?v=${CACHE}`,{cache:'no-store'});
       if(fix.ok)execute('unified-ui-fix-v573.js',await fix.text());
+      const responsive=await fetch(`responsive-fix-v574.js?v=${CACHE}`,{cache:'no-store'});
+      if(responsive.ok)execute('responsive-fix-v574.js',await responsive.text());
     }catch(e){console.error('Growth/UI boot error',e);}
   }
   boot();
