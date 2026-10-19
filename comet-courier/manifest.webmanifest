@@ -1,0 +1,19 @@
+{
+  "name": "COMET COURIER — неоновая аркада",
+  "short_name": "COMET COURIER",
+  "description": "Бесплатная игра на реакцию: три дорожки, щиты и кристаллы",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0c1022",
+  "theme_color": "#0c1022",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
