@@ -1,11 +1,20 @@
-# COMET COURIER 🚀
+# 🚀 COMET COURIER — бесплатная игра на реакцию
 
-Free browser arcade game. Three lanes, crystals, shields and obstacles. Desktop arrow keys / A,D or mobile touch.
+**[▶ Играть в браузере — предварительный просмотр](https://raw.githack.com/Stefasg18/business-zero-/comet-courier-launch/comet-courier/index.html)**
 
-Launch page: `comet-courier/index.html` (iframe uses `game.html`). No backend required.
+Игра запускается без регистрации и оплаты, на компьютере и телефоне. Переходите между тремя дорожками, уклоняйтесь от препятствий, собирайте кристаллы и щиты. Лучший результат сохраняется в браузере.
 
-**Donation payments are intentionally disabled** until the owner adds and verifies their personal TON public wallet address. Never add wallet recovery phrases or private keys to the repository.
+> Временный просмотр предоставляется через сторонний сервис raw.githack.com: он может показывать предупреждение перед открытием HTML. Полноценный хостинг пока настраивается.
 
-TikTok publishing is not enabled until the account is connected to Metricool.
+**[YouTube проекта](https://www.youtube.com/channel/UCxDg94yomdio-NYoQMrAqMg)**
 
-The source lives on the isolated `comet-courier-launch` branch to avoid affecting the existing website.
+## Файлы проекта
+
+- `index.html` — лендинг со встроенной игрой;
+- `game.html` — самостоятельная HTML5-игра;
+- `project-config.js` — публичная конфигурация соцсетей и добровольных переводов;
+- `render_teaser.py` — скрипт создания оригинальной анимационной промоверсии.
+
+Платные переводы в TON не включены: сначала владелец должен предоставить публичный адрес кошелька. Никогда не размещайте приватные ключи и seed-фразу в открытом репозитории.
+
+Содержимое размещено в изолированной ветке `comet-courier-launch`, без изменения основного сайта.
