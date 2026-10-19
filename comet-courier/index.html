@@ -9,6 +9,11 @@
  @media(max-width:1020px){.hero-grid{grid-template-columns:1fr 405px;gap:12px}.game-frame{width:305px;height:508px}.hero-grid{min-height:630px}h1{font-size:70px}.stats{gap:20px}}
  @media(max-width:750px){.wrap{width:min(100% - 38px,560px)}header{height:73px}.nav{gap:10px}.nav a:not(.nav-cta){display:none}.hero-grid{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:55px 0 70px}.eyebrow{font-size:10px}h1{font-size:clamp(61px,13.7vw,91px)}.desc{font-size:15px}.game-wrap{transform:none;margin-top:44px}.game-frame{width:min(83vw,350px);height:auto;aspect-ratio:.6}.stats{gap:22px}.ticker-inner{white-space:nowrap;justify-content:flex-start;gap:38px}.cards{grid-template-columns:1fr}.card{min-height:210px}.card h3{margin-top:18px}.section{padding:65px 0}.section-head{display:block}.section-head p{max-width:500px;margin-top:24px}.bottom{padding:37px 26px;display:block}.bottom .btn{margin-top:25px}.footer{flex-direction:column;align-items:start;gap:10px}}
  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.card{transition:none}}
+</style><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="COMET COURIER"><meta name="mobile-web-app-capable" content="yes"><meta name="application-name" content="COMET COURIER"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon.svg"><style>
+.install-pwa{margin:0 auto 36px;max-width:1120px;border:1px solid #caff6750;border-radius:18px;padding:18px 22px;background:#13203a;color:#eff7ff;display:flex;gap:14px;align-items:center;justify-content:space-between;font:600 14px/1.5 system-ui,sans-serif}
+.install-pwa p{margin:6px 0 0;font-weight:400;color:#b2c1db}
+.install-pwa button{border:0;border-radius:9px;background:#caff67;color:#091322;padding:13px 18px;font-weight:800;cursor:pointer;white-space:nowrap}
+@media(max-width:620px){.install-pwa{margin:0 19px 32px;display:block}.install-pwa button{margin-top:12px;width:100%}}
 </style></head><body>
 <div class="hero" id="top"><div class="wrap"><header><a class="brand" href="#top"><span class="mark">✧</span> COMET / ARCADE</a><nav class="nav"><a href="#about">Об игре</a><a href="#how">Управление</a><a href="#donate">Поддержать</a><a class="nav-cta" href="game.html" target="_blank" rel="noopener">Открыть игру ↗</a></nav></header>
 <div class="hero-grid"><div><div class="eyebrow">НОВАЯ БРАУЗЕРНАЯ АРКАДА</div><h1>COMET<br><span>COURIER</span><b>.</b></h1><p class="desc">Поймай космический ритм. Уходи от препятствий, собирай кристаллы и успей продержаться дольше, чем в прошлый раз.</p><div class="buttons"><a href="#play" class="btn main">ИГРАТЬ БЕСПЛАТНО <span>↗</span></a><a href="#how" class="btn ghost">КАК ИГРАТЬ →</a></div><div class="stats"><div class="stat"><strong>01</strong><span>Простая механика</span></div><div class="stat"><strong>∞</strong><span>Бесконечные забеги</span></div><div class="stat"><strong>0 ₽</strong><span>Стоимость игры</span></div></div></div>
@@ -37,7 +42,7 @@
     </div>
   </div>
 </section>
-<footer class="wrap footer"><div><strong>COMET COURIER</strong> · оригинальная браузерная мини-игра</div><div>Создано на HTML5 · CSS · JavaScript</div></footer>
+<section class="install-pwa" id="install-section" aria-label="Установка игры"><div><strong>🚀 COMET COURIER — игра как приложение</strong><p id="install-instructions">Android и компьютер: установи из меню браузера. iPhone: Safari → Поделиться → На экран «Домой».</p></div><button id="install-trigger" type="button">Как установить</button></section><footer class="wrap footer"><div><strong>COMET COURIER</strong> · оригинальная браузерная мини-игра</div><div>Создано на HTML5 · CSS · JavaScript</div></footer>
 
 <script src="project-config.js"></script>
 <script>
@@ -79,4 +84,12 @@
   });
 })();
 </script>
-</body></html>
+<script>
+(()=>{let promptEvent=null;const button=document.getElementById('install-trigger');const info=document.getElementById('install-instructions');
+if(window.matchMedia('(display-mode: standalone)').matches || navigator.standalone){document.getElementById('install-section').hidden=true;return;}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;button.textContent='Установить игру';});
+button.addEventListener('click',async()=>{if(promptEvent){promptEvent.prompt();await promptEvent.userChoice;promptEvent=null;return;}
+const ios=/iPad|iPhone|iPod/.test(navigator.userAgent);info.textContent=ios?'Открой игру в Safari, нажми «Поделиться», выбери «На экран Домой», затем «Добавить».':'В меню браузера выбери «Установить приложение» / «Добавить на главный экран». Если пункта нет, создай ярлык на сайт.';button.textContent='Инструкция показана';});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}));}
+})();
+</script></body></html>
