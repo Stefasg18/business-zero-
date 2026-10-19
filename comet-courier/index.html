@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c1022"><link rel="icon" href="favicon.svg" type="image/svg+xml"><meta name="description" content="COMET COURIER — бесплатная неоновая аркада прямо в браузере. Запускай на смартфоне или компьютере."><title>COMET COURIER — играй в браузере</title>
+<style>
+ :root{--bg:#080d1c;--ink:#e8f0ff;--muted:#91a0bd;--lime:#caff67;--border:#ffffff1b}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;overflow-x:hidden}a{color:inherit;text-decoration:none}.wrap{width:min(1180px,calc(100% - 56px));margin:auto}header{position:relative;z-index:10;height:86px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}.brand{display:flex;align-items:center;gap:13px;font-size:14px;font-weight:950;letter-spacing:1.5px}.mark{display:grid;place-items:center;width:37px;height:37px;border:2px solid var(--lime);border-radius:11px;color:var(--lime);font-size:22px;transform:rotate(-15deg);box-shadow:0 0 29px #a7ff4240}.nav{display:flex;gap:32px;font-size:12px;font-weight:750;color:#acbbd4}.nav a:hover{color:#fff}.nav-cta{border:1px solid #93b86162;padding:12px 16px;border-radius:10px;color:#d4fba2}.hero{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 80% 26%,#26285d80,transparent 50%),radial-gradient(ellipse at 10% 70%,#102c32a3,transparent 35%),#080d1c}.hero:before{content:"";position:absolute;inset:0;z-index:-1;opacity:.1;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:78px 78px;mask-image:linear-gradient(to bottom,#000,transparent 80%)}.hero-grid{display:grid;grid-template-columns:1fr 500px;gap:44px;min-height:735px;align-items:center;padding:30px 0 76px}.eyebrow{display:flex;align-items:center;gap:13px;font-weight:900;font-size:11px;letter-spacing:3px;color:var(--lime)}.eyebrow:before{content:"";width:25px;height:2px;background:var(--lime)}h1{font-size:clamp(62px,7.2vw,112px);line-height:.93;letter-spacing:-.095em;font-weight:950;margin:27px 0 27px}h1 span{color:transparent;-webkit-text-stroke:2px #b2c6f0}h1 b{color:var(--lime);font-weight:950}.desc{font-size:17px;line-height:1.75;color:#b6c4d9;max-width:500px}.buttons{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:31px 0 33px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:16px 20px;border-radius:11px;border:1px solid var(--border);font-size:12px;font-weight:900;letter-spacing:.7px;transition:transform .15s,background .15s}.btn:hover{transform:translateY(-2px)}.btn.main{background:var(--lime);color:#0e1a15;border:1px solid var(--lime);box-shadow:0 14px 40px #a7ff522b}.btn.ghost{background:#ffffff0a;color:#dae6fa}.stats{display:flex;gap:32px;border-top:1px solid #ffffff20;padding-top:27px;max-width:520px}.stat strong{font-size:19px;display:block;letter-spacing:-.7px}.stat span{display:block;color:#8193b2;font-size:11px;margin-top:3px}.game-wrap{position:relative;width:fit-content;margin:33px auto 0;transform:rotate(2.1deg)}.game-wrap:before{content:"";position:absolute;inset:2% 0 1%;filter:blur(55px);background:#7cb3d92d}.game-frame{position:relative;width:350px;height:583px;border:8px solid #273652;border-radius:27px;box-shadow:0 42px 100px #0008,0 0 0 1px #a6bcff18,0 0 0 14px #17203c64;overflow:hidden;background:#101735}.game-frame iframe{width:100%;height:100%;border:0;display:block}.frame-note{text-align:center;color:#8da3c3;font-size:11px;letter-spacing:1px;margin-top:35px;font-weight:700}.frame-note span{color:var(--lime)}.ticker{border-block:1px solid #ffffff19;background:#0f162a;padding:19px 0;overflow:hidden}.ticker-inner{display:flex;justify-content:space-between;gap:20px;color:#a8bada;font-size:11px;letter-spacing:2px;font-weight:900}.ticker-inner b{color:#d0ff78;font-size:16px;vertical-align:middle}.section{padding:93px 0}.section-head{display:flex;align-items:end;justify-content:space-between;margin-bottom:36px;gap:30px}.section h2{font-size:clamp(38px,5vw,60px);letter-spacing:-.07em;line-height:1.05;margin:15px 0 0}.section p{color:#99abc6;line-height:1.75}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:linear-gradient(145deg,#17223a,#10192e);border:1px solid #ffffff1d;border-radius:19px;padding:30px;min-height:250px;transition:transform .2s}.card:hover{transform:translateY(-4px)}.card .number{color:#9cafce;font-size:11px;font-weight:900;letter-spacing:2px}.card h3{font-size:22px;margin:43px 0 10px;letter-spacing:-.7px}.card p{font-size:13px;margin:0}.card-icon{display:grid;place-items:center;width:47px;height:47px;border-radius:14px;font-size:25px;background:#caff6818;color:#d9ff9c;margin-top:21px}.bottom{background:linear-gradient(110deg,#151f3c,#122329);border:1px solid #ffffff23;border-radius:26px;padding:60px 65px;display:flex;justify-content:space-between;gap:35px;align-items:center}.bottom h2{font-size:clamp(32px,4vw,53px);margin:13px 0}.bottom p{max-width:500px;margin:0}.footer{padding:45px 0;color:#788ba9;display:flex;justify-content:space-between;align-items:center;font-size:11px;gap:25px;border-top:1px solid #ffffff16}.footer strong{color:#b9c9e2}#top{scroll-margin-top:10px}
+
+/* TON donation component */
+.donate-area{padding-bottom:94px}.donate-panel{background:linear-gradient(135deg,#182743,#111a31);border:1px solid #caff673a;border-radius:24px;padding:42px;display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:center}.donate-panel h2{font-size:clamp(32px,4.7vw,52px);line-height:1.1;letter-spacing:-.055em;margin:16px 0 15px}.donate-panel p{color:#9fb1cc;line-height:1.65}.donate-icon{display:inline-grid;place-items:center;background:#caff6720;color:var(--lime);border-radius:14px;width:52px;height:52px;font-size:26px}.donate-controls{border:1px solid #ffffff20;background:#0a1125;border-radius:20px;padding:26px}.donate-status{color:#e0eeff;font-size:13px;font-weight:800}.donate-amounts{display:flex;gap:9px;margin:18px 0}.donate-amounts a{flex:1;text-align:center;background:var(--lime);color:#142015;border-radius:10px;padding:15px 8px;font-weight:900;font-size:14px}.donate-amounts a:hover{filter:brightness(1.1)}.addressline{display:flex;gap:8px;align-items:center;overflow:hidden;background:#131f39;padding:10px;border-radius:11px;font-size:12px;color:#c4d0e3}.addressline code{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.mini-btn{cursor:pointer;border:1px solid #a9bdf04a;border-radius:9px;background:transparent;color:white;padding:10px;font-size:11px;font-weight:800}.donate-notice{color:#8194b4!important;font-size:11px!important;margin:15px 0 0!important}.awaiting{color:#e9cba7!important}.donate-social{display:flex;gap:16px;flex-wrap:wrap;margin-top:17px}.donate-social a{font-size:12px;color:var(--lime);text-decoration:underline}.qr-image{width:156px;aspect-ratio:1;display:block;margin:17px auto 7px;padding:8px;background:white;border-radius:11px}.is-hidden{display:none!important}
+@media(max-width:750px){.donate-panel{grid-template-columns:1fr;padding:28px 20px;gap:24px}.donate-controls{padding:19px}.donate-amounts a{padding:13px 7px;font-size:12px}}
+ @media(max-width:1020px){.hero-grid{grid-template-columns:1fr 405px;gap:12px}.game-frame{width:305px;height:508px}.hero-grid{min-height:630px}h1{font-size:70px}.stats{gap:20px}}
+ @media(max-width:750px){.wrap{width:min(100% - 38px,560px)}header{height:73px}.nav{gap:10px}.nav a:not(.nav-cta){display:none}.hero-grid{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:55px 0 70px}.eyebrow{font-size:10px}h1{font-size:clamp(61px,13.7vw,91px)}.desc{font-size:15px}.game-wrap{transform:none;margin-top:44px}.game-frame{width:min(83vw,350px);height:auto;aspect-ratio:.6}.stats{gap:22px}.ticker-inner{white-space:nowrap;justify-content:flex-start;gap:38px}.cards{grid-template-columns:1fr}.card{min-height:210px}.card h3{margin-top:18px}.section{padding:65px 0}.section-head{display:block}.section-head p{max-width:500px;margin-top:24px}.bottom{padding:37px 26px;display:block}.bottom .btn{margin-top:25px}.footer{flex-direction:column;align-items:start;gap:10px}}
+ @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.card{transition:none}}
+</style></head><body>
+<div class="hero" id="top"><div class="wrap"><header><a class="brand" href="#top"><span class="mark">✧</span> COMET / ARCADE</a><nav class="nav"><a href="#about">Об игре</a><a href="#how">Управление</a><a href="#donate">Поддержать</a><a class="nav-cta" href="game.html" target="_blank" rel="noopener">Открыть игру ↗</a></nav></header>
+<div class="hero-grid"><div><div class="eyebrow">НОВАЯ БРАУЗЕРНАЯ АРКАДА</div><h1>COMET<br><span>COURIER</span><b>.</b></h1><p class="desc">Поймай космический ритм. Уходи от препятствий, собирай кристаллы и успей продержаться дольше, чем в прошлый раз.</p><div class="buttons"><a href="#play" class="btn main">ИГРАТЬ БЕСПЛАТНО <span>↗</span></a><a href="#how" class="btn ghost">КАК ИГРАТЬ →</a></div><div class="stats"><div class="stat"><strong>01</strong><span>Простая механика</span></div><div class="stat"><strong>∞</strong><span>Бесконечные забеги</span></div><div class="stat"><strong>0 ₽</strong><span>Стоимость игры</span></div></div></div>
+<div id="play"><div class="game-wrap"><div class="game-frame"><iframe title="Играть в COMET COURIER" src="game.html" loading="eager" allow="autoplay" tabindex="0"></iframe></div><div class="frame-note"><span>●</span> ЖИВАЯ ИГРА · НАЖМИ «НАЧАТЬ ЗАБЕГ»</div></div></div></div></div></div>
+<div class="ticker"><div class="wrap ticker-inner"><span><b>✳</b> NO INSTALLATION</span><span><b>↗</b> INSTANT PLAY</span><span><b>✦</b> PURE ARCADE</span><span><b>◈</b> HIGH SCORE</span></div></div>
+<main><section class="section wrap" id="about"><div class="section-head"><div><div class="eyebrow">ПОЧЕМУ СТОИТ ПОПРОБОВАТЬ</div><h2>Один забег.<br>Ещё один.</h2></div><p style="max-width:350px">Короткие игровые сессии, понятные правила и сложность, которая растёт вместе с твоим рекордом.</p></div>
+<div class="cards"><article class="card"><div class="number">01 / DODGE</div><div class="card-icon">⌁</div><h3>Маневрируй</h3><p>Переключайся между тремя дорожками и уходи от красных барьеров.</p></article><article class="card"><div class="number">02 / COLLECT</div><div class="card-icon">✧</div><h3>Лови кристаллы</h3><p>Собирай зелёную энергию, увеличивай комбо и набирай больше очков.</p></article><article class="card" id="how"><div class="number">03 / SURVIVE</div><div class="card-icon">◇</div><h3>Побей рекорд</h3><p>На компьютере — стрелки или A/D. На телефоне — касайся нужной дорожки. Голубой щит спасает от удара.</p></article></div></section>
+<section class="wrap" style="padding-bottom:90px"><div class="bottom"><div><div class="eyebrow">ГОТОВ К СЛЕДУЮЩЕМУ РЕКОРДУ?</div><h2>Твой космос.<br>Твои правила.</h2><p>Игра запускается прямо в браузере, без установки и регистрации. Для телефона и компьютера.</p></div><a href="game.html" target="_blank" rel="noopener" class="btn main">НА ВЕСЬ ЭКРАН ↗</a></div></section></main>
+
+<section class="wrap donate-area" id="donate" aria-labelledby="donate-heading">
+  <div class="donate-panel">
+    <div><span class="donate-icon" aria-hidden="true">✦</span><h2 id="donate-heading">Поддержи развитие игры</h2>
+      <p>COMET COURIER бесплатна. Пожертвования помогают создавать новые уровни, эффекты и другие мини-игры. Перевод добровольный и не даёт дополнительных игровых преимуществ.</p>
+      <div class="donate-social" id="social-links" hidden></div>
+    </div>
+    <div class="donate-controls">
+      <div class="donate-status" id="donate-status">Подключение донатов ещё не завершено</div>
+      <div id="donate-working" hidden>
+        <p style="font-size:12px;margin:8px 0 0">Выбери сумму для отправки с совместимого TON-кошелька:</p>
+        <div class="donate-amounts" id="donate-amounts"></div>
+        <div class="addressline"><code id="ton-address"></code><button type="button" class="mini-btn" id="copy-address">Копировать</button></div>
+        <img alt="QR-код для перевода TON" id="donation-qr" class="qr-image" hidden>
+      </div>
+      <p id="donate-awaiting" class="awaiting" style="font-size:13px">Здесь появится безопасная ссылка для перевода, когда владелец укажет адрес кошелька.</p>
+      <p class="donate-notice">Только переводы TON в сети TON. Комиссии и курс зависят от кошелька. Нажатие кнопки не подтверждает успешный перевод.</p>
+    </div>
+  </div>
+</section>
+<footer class="wrap footer"><div><strong>COMET COURIER</strong> · оригинальная браузерная мини-игра</div><div>Создано на HTML5 · CSS · JavaScript</div></footer>
+
+<script src="project-config.js"></script>
+<script>
+(() => {
+  'use strict';
+  const cfg = window.COMET_CONFIG || {};
+  const wallet = String(cfg.tonAddress || '').trim();
+  const valid = /^[A-Za-z0-9_-]{48}$/.test(wallet);
+  const safeSocial = [ ['TikTok','tiktokUrl','tiktok.com'], ['YouTube','youtubeUrl','youtube.com'], ['Telegram','telegramUrl','t.me'] ];
+  const socials = document.getElementById('social-links');
+  for(const [name,field,domain] of safeSocial){
+    const candidate = cfg[field];
+    if(!candidate)continue;
+    try{ const u = new URL(candidate); const host = u.hostname.toLowerCase();
+      if(u.protocol !== 'https:' || !(host===domain || host.endsWith('.'+domain)))continue;
+      const a = document.createElement('a');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent=name;
+      socials.append(a);socials.hidden=false;
+    }catch(e){}
+  }
+  if(!valid) return;
+  document.getElementById('donate-status').textContent='Поддержать проект через TON';
+  document.getElementById('donate-working').hidden=false;
+  document.getElementById('donate-awaiting').hidden=true;
+  document.getElementById('ton-address').textContent=wallet;
+  const amounts = document.getElementById('donate-amounts');
+  for(const value of ['0.5','1','3']) {
+    const nanos = String(Math.round(Number(value) * 1e9));
+    const link = document.createElement('a');
+    // Universal wallet link requests a transfer but never performs one itself.
+    link.href='ton://transfer/'+encodeURIComponent(wallet)+'?amount='+nanos+'&text=COMET_COURIER_SUPPORT';
+    link.textContent=value+' TON';link.setAttribute('aria-label','Отправить '+value+' TON');
+    amounts.append(link);
+  }
+  const qr=document.getElementById('donation-qr');
+  if(cfg.tonQrImage === 'donation-ton-qr.png'){qr.src='donation-ton-qr.png';qr.hidden=false;}
+  document.getElementById('copy-address').addEventListener('click',async() => {
+    try {await navigator.clipboard.writeText(wallet);document.getElementById('copy-address').textContent='Скопировано';}
+    catch {window.prompt('Скопируй TON-адрес',wallet);}
+  });
+})();
+</script>
+</body></html>
