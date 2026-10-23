@@ -42,6 +42,7 @@ for frame in range(FPS*SECONDS):
     d.rectangle((92,246,628,330),fill=(17,28,54))
     label(d,75,"COMET COURIER",NEON,heading)
     label(d,161,"REACTION TEST",(232,241,255),medium)
+    label(d,207,"ANIMATION · NOT GAMEPLAY",(255,186,112),small)
     d.text((120,270),f"SCORE  {int(t*120):04d}",font=small,fill=(244,255,255))
     d.text((500,270),"HP  3",font=small,fill=(253,138,173))
     label(d,1097,"3 LANES / ENDLESS RUN",(241,250,255),medium)
